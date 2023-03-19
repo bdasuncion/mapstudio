@@ -200,8 +200,14 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 				//		collisionInfo.getWidth()*scale, collisionInfo.getHeight()*scale));
 				
 				g2D.setColor(new Color(255, 255, 255, 190));
-				g2D.fill(new Rectangle((collisionX + collisionInfo.getX()), (collisionY + collisionInfo.getY()),
+				//g2D.fill(new Rectangle((collisionX + collisionInfo.getX()), (collisionY + collisionInfo.getY()),
+				//		collisionInfo.getWidth(), collisionInfo.getLength()));
+				g2D.fill(new Rectangle((collisionX + collisionInfo.getX()), (collisionY - collisionInfo.getHeight() + 16),
 						collisionInfo.getWidth(), collisionInfo.getHeight()));
+				
+				g2D.setColor(new Color(128, 128, 128, 190));
+				g2D.fill(new Rectangle((collisionX + collisionInfo.getX()), (collisionY - collisionInfo.getHeight()),
+						collisionInfo.getWidth(), collisionInfo.getLength()));
 			}
 			collisionX = 0;
 			collisionY += 16;

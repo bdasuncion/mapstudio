@@ -12,13 +12,15 @@ public class CollisionInfo {
     private int x = 0;
     private int y = 0;
     private int width = 0;
+    private int length = 0;
     private int height = 0;
     private boolean hasCollision = false;
     private int collisionType = TYPE_SOLID;
     private boolean hflip = false;
     private boolean vflip = false;
     
-    public static int WIDTHHEIGHT_MAX_VALUE = 15;
+    public static int WIDTHLENGTH_MAX_VALUE = 15;
+    public static int HEIGHT_MAX_VALUE = 4080;
     public static int XY_MAX_VALUE = 7;
 	public static int MIN_VALUE = 0;
 		
@@ -39,6 +41,12 @@ public class CollisionInfo {
 	}
 	public void setWidth(int width) {
 		this.width = width;
+	}
+	public int getLength() {
+		return length;
+	}
+	public void setLength(int height) {
+		this.length = height;
 	}
 	public int getHeight() {
 		return height;
@@ -63,6 +71,7 @@ public class CollisionInfo {
     	setX(ci.getX());
     	setY(ci.getY());
     	setWidth(ci.getWidth());
+    	setLength(ci.getLength());
     	setHeight(ci.getHeight());
     	setCollisionType(ci.getCollisionType());
     	setHasCollision(ci.isHasCollision());
@@ -74,7 +83,7 @@ public class CollisionInfo {
 	
 	public void setHflip(boolean hflip) {
 		if (this.hflip != hflip && width > 0) {
-			x = WIDTHHEIGHT_MAX_VALUE - (x + width);
+			x = WIDTHLENGTH_MAX_VALUE - (x + width);
 		}
 		this.hflip = hflip;
 	}
@@ -84,8 +93,8 @@ public class CollisionInfo {
 	}
 	
 	public void setVflip(boolean vflip) {
-		if (this.vflip != vflip && height > 0) {
-			y = WIDTHHEIGHT_MAX_VALUE - (y + height);
+		if (this.vflip != vflip && length > 0) {
+			y = WIDTHLENGTH_MAX_VALUE - (y + length);
 		}
 		this.vflip = vflip;
 	}

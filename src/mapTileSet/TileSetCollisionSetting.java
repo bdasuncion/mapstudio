@@ -68,7 +68,7 @@ public class TileSetCollisionSetting extends TileSetPanel {
 				
 				g2D.setColor(new Color(255, 255, 255, 190));
 				g2D.fill(new Rectangle((x + collisionInfo.getX())*scale, (y + collisionInfo.getY())*scale,
-						collisionInfo.getWidth()*scale, collisionInfo.getHeight()*scale));
+						collisionInfo.getWidth()*scale, collisionInfo.getLength()*scale));
 			}
 			x = 0;
 			y += getSnapToHeight();

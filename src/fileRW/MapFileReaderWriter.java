@@ -55,6 +55,7 @@ public class MapFileReaderWriter {
 	private static final String MAPHEIGHT = "mapHeight";
 
 	private static final String COLLISIONWIDTH = "width";
+	private static final String COLLISIONLENGTH = "length";
 	private static final String COLLISIONHEIGHT = "height";
 
 	private static final String MAPENTRY = "mapEntry";
@@ -306,6 +307,8 @@ public class MapFileReaderWriter {
 		startY.appendChild(doc.createTextNode(collisionInfo.getY() + ""));
 		Element width = doc.createElement(COLLISIONWIDTH);
 		width.appendChild(doc.createTextNode(collisionInfo.getWidth() + ""));
+		Element length = doc.createElement(COLLISIONLENGTH);
+		length.appendChild(doc.createTextNode(collisionInfo.getLength() + ""));
 		Element height = doc.createElement(COLLISIONHEIGHT);
 		height.appendChild(doc.createTextNode(collisionInfo.getHeight() + ""));
 		Element hflip = doc.createElement(ISHFLIP);
@@ -316,6 +319,7 @@ public class MapFileReaderWriter {
 		collision.appendChild(startX);
 		collision.appendChild(startY);
 		collision.appendChild(width);
+		collision.appendChild(length);
 		collision.appendChild(height);
 		collision.appendChild(hflip);
 		collision.appendChild(vflip);
@@ -575,6 +579,8 @@ public class MapFileReaderWriter {
 				} else if (eElement.getTagName().matches(COLLISIONWIDTH)) {
 					// System.out.println("INDEX " + eElement.getTagName());
 					collisionInfo.setWidth(Integer.parseInt(eElement.getTextContent()));
+				} else if (eElement.getTagName().matches(COLLISIONLENGTH)) {
+					collisionInfo.setLength(Integer.parseInt(eElement.getTextContent()));
 				} else if (eElement.getTagName().matches(COLLISIONHEIGHT)) {
 					collisionInfo.setHeight(Integer.parseInt(eElement.getTextContent()));
 				}

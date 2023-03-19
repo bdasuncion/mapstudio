@@ -167,7 +167,8 @@ public class ExportToC {
 		
 		writeMapEntry(f, cFile, mapInfo.getMapLayers());
 		
-		writeCollision(f, cFile, mapInfo.getCollisionTiles());
+		//writeCollision(f, cFile, mapInfo.getCollisionTiles());
+		writeHeightMap(f, cFile, mapInfo.getCollisionTiles());
 		
 		writeTileSet(f, cFile, mapInfo.getTileSets());
 		
@@ -219,7 +220,7 @@ public class ExportToC {
 			int tileIdx = tileInfo.getIndex();
 			int hflip = (tileInfo.isHflip() ? 1 << 10 : 0);
 			int vflip = (tileInfo.isVflip() ? 1 << 11 : 0);
-			int palIndex = tileInfo.getPalletteIndex() << 12;
+			int palIndex = (tileInfo.getPalletteIndex()) << 12;
 			
 			int mapEntry = tileIdx | hflip | vflip | palIndex;
 
@@ -387,24 +388,55 @@ public class ExportToC {
 		}
 	}
 	
+	private static void writeHeightMap(File f, FileWriter cFile, Vector<CollisionInfo> collisionSet) {
+		try {
+			cFile.write("const u8 heightMap_" + getFileName(f).toLowerCase() + "[] = {\n\t");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		int conversionFactor = 8;
+		
+		int idx16 = 0;
+		for (CollisionInfo collisionInfo : collisionSet) {
+			try {
+				cFile.write((collisionInfo.getHeight()/conversionFactor) + ",");
+				++idx16;
+				if (idx16 >= 16) {
+					idx16 = 0;
+					cFile.write("\n\t");
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}	
+		}
+		
+		try {
+			cFile.write("};\n");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	private static void writeCollision(File f, FileWriter cFile, Vector<CollisionInfo> collisionSet) {
 		try {
 			cFile.write("const MapCollision collision_" + getFileName(f).toLowerCase() + "[] = {\n\t");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		int idx16 = 0;
 		for (CollisionInfo collisionInfo : collisionSet) {
 			try {
 				//System.out.println(collisionInfo.getX() + " " +  collisionInfo.getY());
-				if (collisionInfo.getWidth() != 0 && collisionInfo.getHeight() != 0) {
+				if (collisionInfo.getWidth() != 0 && collisionInfo.getLength() != 0) {
 				    cFile.write("{ " + collisionInfo.getX() + ", " + collisionInfo.getY() + ", " + 
 			        collisionInfo.getCollisionTypeToString() + ", " + collisionInfo.getWidth() + ", " +
-			        collisionInfo.getHeight() + "}, ");
+			        collisionInfo.getLength() + "}, ");
 				} else {
 					cFile.write("{0, 0, 0, 0, 0 }, ");
 				}
+				
 				++idx16;
 				if (idx16 >= 16) {
 					idx16 = 0;
@@ -430,7 +462,9 @@ public class ExportToC {
 					+ "2, " + (mapInfo.getTileSets().size() - 1) + ", " + mapInfo.getPallete().size()
 					+ ", " + mapInfo.getEvents().size() + ", " + mapInfo.getActors().size() + ", "
 					+ "NULL " + ", mapentryset_" + name + ", tileset_" + name
-					+ ", pallette_" + name + ", transfer_" + name + ", collision_" + name + ", actors_" + name + ", NULL };\n" );
+					//+ ", pallette_" + name + ",\n transfer_" + name + ", collision_" + name + ", actors_" + name + 
+					+ ", pallette_" + name + ",\ntransfer_" + name + ", heightMap_" + name + ", actors_" + name + 
+					", NULL, NULL, NULL, NULL, {0,0,0,0,0} };\n" );
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
