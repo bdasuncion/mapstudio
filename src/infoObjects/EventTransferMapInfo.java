@@ -28,7 +28,7 @@ public class EventTransferMapInfo extends EventInfo {
 		setX(info.getX());
 		setY(info.getY());
 		setWidth(info.getWidth());
-		setHeight(info.getHeight());
+		setLength(info.getLength());
 	}
 	
 	public int getTransferToX() {

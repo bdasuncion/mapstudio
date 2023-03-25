@@ -33,7 +33,7 @@ public class EventSettingDialog extends JDialog implements ActionListener, KeyLi
 	private TransferPanel transferPanel;
 	
 	
-	int x, y, width, height;
+	int x, y, zOffset, width, length;
 	String name;
 	Vector<EventInfo> evenInfos;
 	
@@ -77,8 +77,9 @@ public class EventSettingDialog extends JDialog implements ActionListener, KeyLi
 
     private void initFields() {
     	basicPanel.setName("");
-    	basicPanel.setHeight(EventInfo.MIN_VALUE);
+    	basicPanel.setLength(EventInfo.MIN_VALUE);
     	basicPanel.setWidth(EventInfo.MIN_VALUE);
+    	basicPanel.setZOffset(0);
     	transferPanel.setTransferToMap("");
     	transferPanel.setTransferToX(EventTransferMapInfo.XYMIN_VALUE);
     	transferPanel.setTransferToY(EventTransferMapInfo.XYMIN_VALUE);
@@ -90,14 +91,16 @@ public class EventSettingDialog extends JDialog implements ActionListener, KeyLi
     	evenInfos = e;
     	this.x = x;
     	this.y = y;
+    	this.zOffset = 0;
     	initFields();
     	for (EventInfo eventInfo: evenInfos) {
 			if (x >= eventInfo.getX() && x < (eventInfo.getX() + eventInfo.getWidth()) &&
-				y >= eventInfo.getY() && y < (eventInfo.getY() + eventInfo.getHeight())) {
+				y >= eventInfo.getY() && y < (eventInfo.getY() + eventInfo.getLength())) {
 				info = eventInfo;
 				basicPanel.setType(eventInfo.getType());
 				basicPanel.setWidth(eventInfo.getWidth());
-				basicPanel.setHeight(eventInfo.getHeight());
+				basicPanel.setLength(eventInfo.getLength());
+				basicPanel.setZOffset(eventInfo.getzOffset());
 				if (eventInfo.getType().contentEquals(EventInfo.TYPE_TRANSFER)) {
 					transferPanel.settransferEventFields((EventTransferMapInfo) eventInfo);
 				}
@@ -145,10 +148,12 @@ public class EventSettingDialog extends JDialog implements ActionListener, KeyLi
 	private class BasicPanel extends JPanel {
 		//JTextField nameField;
 		private JSpinner widthSpinner;
-		private JSpinner heightSpinner;
+		private JSpinner lengthSpinner;
+		private JSpinner zOffsetSpinner;
 		private JComboBox type;
 		SpinnerNumberModel widthModel;
-		SpinnerNumberModel heightModel;
+		SpinnerNumberModel lengthModel;
+		SpinnerNumberModel zOffsetModel;
 		
 		public BasicPanel() {
 			super();
@@ -162,27 +167,35 @@ public class EventSettingDialog extends JDialog implements ActionListener, KeyLi
 	    	
 	    	widthModel = new SpinnerNumberModel(EventInfo.MIN_VALUE, EventInfo.MIN_VALUE,
 	    			EventInfo.WIDTHHEIGHT_MAX, 8);
-	    	heightModel = new SpinnerNumberModel(EventInfo.MIN_VALUE, EventInfo.MIN_VALUE,
+	    	lengthModel = new SpinnerNumberModel(EventInfo.MIN_VALUE, EventInfo.MIN_VALUE,
 	    			EventInfo.WIDTHHEIGHT_MAX, 8);
+	    	zOffsetModel = new SpinnerNumberModel(0, 0, EventInfo.ZOFFSET_MAX_VALUE, 8);
 	    	
 	    	widthSpinner = new JSpinner(widthModel);
 	    	widthSpinner.setSize(15,10);
 	    	//widthSpinner.getEditor().addKeyListener(this);
-	    	heightSpinner = new JSpinner(heightModel);
-	    	heightSpinner.setSize(15,10);
+	    	lengthSpinner = new JSpinner(lengthModel);
+	    	lengthSpinner.setSize(15,10);
 	    	//heightSpinner.getEditor().addKeyListener(this);
+	    	zOffsetSpinner = new JSpinner(zOffsetModel);
+	    	zOffsetSpinner.setSize(15, 10);
 	    	
 	    	JPanel panelWidth = new JPanel();
 	    	panelWidth.add(new JLabel("width"));
 	    	panelWidth.add(widthSpinner);
 	    	
-	    	JPanel panelHeight = new JPanel();
-	    	panelHeight.add(new JLabel("height"));
-	    	panelHeight.add(heightSpinner);
+	    	JPanel panelLength = new JPanel();
+	    	panelLength.add(new JLabel("length"));
+	    	panelLength.add(lengthSpinner);
+	    	
+	    	JPanel panelZOffset = new JPanel();
+	    	panelLength.add(new JLabel("zOffset"));
+	    	panelLength.add(zOffsetSpinner);
 	    	
 	    	JPanel widthHeightPanel = new JPanel();
 	    	widthHeightPanel.add(panelWidth);
-	    	widthHeightPanel.add(panelHeight);
+	    	widthHeightPanel.add(panelLength);
+	    	widthHeightPanel.add(panelZOffset);
 	    	
 	    	String types[] = new String[2];
 	    	types[0] = EventInfo.TYPE_NONE;
@@ -206,8 +219,9 @@ public class EventSettingDialog extends JDialog implements ActionListener, KeyLi
 			if (info != null) {
 				if (!((String)type.getSelectedItem()).contentEquals(EventInfo.TYPE_NONE)) {
 				    info.setType((String)type.getSelectedItem());
-				    info.setHeight((int)heightSpinner.getValue());
+				    info.setLength((int)lengthSpinner.getValue());
 					info.setWidth((int)widthSpinner.getValue());
+					info.setzOffset((int)zOffsetSpinner.getValue());
 					
 					if (((String) type.getSelectedItem()).contentEquals(EventInfo.TYPE_TRANSFER) &&
 							info.getType() != EventInfo.TYPE_TRANSFER) {
@@ -225,7 +239,8 @@ public class EventSettingDialog extends JDialog implements ActionListener, KeyLi
 				//info.setType(nameField.getText());
 				info.setX(x);
 				info.setY(y);
-				info.setHeight((int)heightSpinner.getValue());
+				info.setzOffset((int)zOffsetSpinner.getValue());
+				info.setLength((int)lengthSpinner.getValue());
 				info.setWidth((int)widthSpinner.getValue());
 				info.setType((String)type.getSelectedItem());
 				
@@ -248,8 +263,12 @@ public class EventSettingDialog extends JDialog implements ActionListener, KeyLi
 			widthModel.setValue(width);
 		}
 		
-		public void setHeight(int height) {
-			heightModel.setValue(height);
+		public void setLength(int height) {
+			lengthModel.setValue(height);
+		}
+		
+		public void setZOffset(int zOffset) {
+			zOffsetModel.setValue(zOffset);
 		}
 	}
 	

@@ -374,7 +374,7 @@ public class ExportToC {
 			try {
 				cFile.write("\t{ " + eventInfo.getX() + ", " + eventInfo.getY() + ", " + eventInfo.getTransferToX() + ", "
 						+ eventInfo.getTransferToY() + ", " + "&" + eventInfo.getTransferToMap() + ", "
-						+ eventInfo.getWidth() + ", " + eventInfo.getHeight() + ", "
+						+ eventInfo.getWidth() + ", " + eventInfo.getLength() + ", " + eventInfo.getzOffset() + ", "
 						+ eventInfo.getFaceDirectionOnTransfer() + "},\n");
 			} catch (IOException e) {
 				e.printStackTrace();

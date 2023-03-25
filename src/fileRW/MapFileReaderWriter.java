@@ -85,7 +85,8 @@ public class MapFileReaderWriter {
 	private static final String EVENT_YPOS = "event_ypos";
 	private static final String EVENT_TYPE = "event_type";
 	private static final String EVENT_WIDTH = "event_width";
-	private static final String EVENT_HEIGHT = "event_height";
+	private static final String EVENT_LENGTH = "event_length";
+	private static final String EVENT_ZOFFSET = "event_zoffset";
 	private static final String EVENTTRANSFER_MAP = "eventtransfer_map";
 	private static final String EVENTTRANSFER_X = "eventtransfer_x";
 	private static final String EVENTTRANSFER_Y = "eventtransfer_y";
@@ -168,14 +169,17 @@ public class MapFileReaderWriter {
 		y.appendChild(doc.createTextNode(Integer.toString(eventInfo.getY())));
 		Element width = doc.createElement(EVENT_WIDTH);
 		width.appendChild(doc.createTextNode(Integer.toString(eventInfo.getWidth())));
-		Element height  = doc.createElement(EVENT_HEIGHT);
-		height.appendChild(doc.createTextNode(Integer.toString(eventInfo.getHeight())));
+		Element length  = doc.createElement(EVENT_LENGTH);
+		length.appendChild(doc.createTextNode(Integer.toString(eventInfo.getLength())));
+		Element zOffset  = doc.createElement(EVENT_ZOFFSET);
+		zOffset.appendChild(doc.createTextNode(Integer.toString(eventInfo.getzOffset())));
 		
 		event.appendChild(type);
 		event.appendChild(x);
 		event.appendChild(y);
 		event.appendChild(width);
-		event.appendChild(height);
+		event.appendChild(length);
+		event.appendChild(zOffset);
 		
 		if (eventInfo.getType().contentEquals(EventInfo.TYPE_TRANSFER)) {
 			createEventTransfer(event, doc, (EventTransferMapInfo) eventInfo);
@@ -661,8 +665,10 @@ public class MapFileReaderWriter {
 					eventInfo.setY(Integer.parseInt(eElement.getTextContent()));
 				} else if (eElement.getTagName().matches(EVENT_WIDTH)) {
 					eventInfo.setWidth(Integer.parseInt(eElement.getTextContent()));
-				} else if (eElement.getTagName().matches(EVENT_HEIGHT)) {
-					eventInfo.setHeight(Integer.parseInt(eElement.getTextContent()));
+				} else if (eElement.getTagName().matches(EVENT_LENGTH)) {
+					eventInfo.setLength(Integer.parseInt(eElement.getTextContent()));
+				} else if (eElement.getTagName().matches(EVENT_ZOFFSET)) {
+					eventInfo.setzOffset(Integer.parseInt(eElement.getTextContent()));
 				} else if (eElement.getTagName().matches(EVENT_TYPE)) {
 					eventInfo.setType(eElement.getTextContent());
 				} else if (eElement.getTagName().matches(EVENTTRANSFER_MAP)) {

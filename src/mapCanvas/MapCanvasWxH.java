@@ -282,7 +282,10 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 			g2D.drawString(event.getType(), event.getX(), event.getY() + 6);
 			g2D.setStroke(new BasicStroke(1.0f));
 			g2D.setColor(Color.RED);
-		    g2D.drawRect(event.getX(), event.getY(), event.getWidth(), event.getHeight());
+		    g2D.drawRect(event.getX(), event.getY(), event.getWidth(), event.getLength());
+	    	g2D.drawLine(event.getX() + event.getWidth()/2, event.getY() + event.getLength()/2, 
+	    			event.getX() + event.getWidth()/2, event.getY() + event.getLength()/2 - event.getzOffset());
+	    	g2D.drawRect(event.getX(), event.getY() - event.getzOffset(), event.getWidth(), event.getLength());
 		    if (event.getType().contentEquals(EventInfo.TYPE_TRANSFER)) {
 		    	drawEventMapTransfer(g2D, display, (EventTransferMapInfo) event);
 		    }
