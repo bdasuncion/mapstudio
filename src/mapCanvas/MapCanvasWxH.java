@@ -60,6 +60,8 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 	private int tileHeight = 8;
 	private int collisionWidth = 8;
 	private int collisionHeight = 8;
+	private int collisionFilterMin = 0;
+	private int collisionFilterMax = 0;
 //	used to determine how large the array of the map will be
 //	together with tile width and height, the size of the map
 //	is determined
@@ -196,18 +198,19 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 				collisionX = 16*j;
 				CollisionInfo collisionInfo = mapInfo.getCollisionTiles().
 						get(j + i*(getMapWidthInTiles()/2));
-				//g2D.draw(new Rectangle((x + collisionInfo.getX())*scale, (y + collisionInfo.getY())*scale,
-				//		collisionInfo.getWidth()*scale, collisionInfo.getHeight()*scale));
 				
-				g2D.setColor(new Color(255, 255, 255, 190));
-				//g2D.fill(new Rectangle((collisionX + collisionInfo.getX()), (collisionY + collisionInfo.getY()),
-				//		collisionInfo.getWidth(), collisionInfo.getLength()));
-				g2D.fill(new Rectangle((collisionX + collisionInfo.getX()), (collisionY - collisionInfo.getHeight() + 16),
-						collisionInfo.getWidth(), collisionInfo.getHeight()));
-				
-				g2D.setColor(new Color(128, 128, 128, 190));
-				g2D.fill(new Rectangle((collisionX + collisionInfo.getX()), (collisionY - collisionInfo.getHeight()),
-						collisionInfo.getWidth(), collisionInfo.getLength()));
+				if (collisionInfo.getHeight() >= collisionFilterMin && collisionInfo.getHeight() <= collisionFilterMax) {
+					g2D.setColor(new Color(255, 255, 255, 190));
+					g2D.fill(new Rectangle((collisionX + collisionInfo.getX()), (collisionY - collisionInfo.getHeight() + 16),
+							collisionInfo.getWidth(), collisionInfo.getHeight()));
+					
+					g2D.setColor(new Color(128, 128, 128, 190));
+					g2D.fill(new Rectangle((collisionX + collisionInfo.getX()), (collisionY - collisionInfo.getHeight()),
+							collisionInfo.getWidth(), collisionInfo.getLength()));
+					g2D.setColor(new Color(200, 0, 0, 190));
+					g2D.drawString("" + collisionInfo.getHeight(), collisionX + collisionInfo.getX(), 
+							collisionY - collisionInfo.getHeight() + 14);
+				}
 			}
 			collisionX = 0;
 			collisionY += 16;
@@ -586,6 +589,13 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 	@Override
 	public void reloadMap() {
 		mapInfo.reset();
+		repaint();
+	}
+
+	@Override
+	public void setCollisionFilter(int min, int max) {
+		collisionFilterMin = min;
+		collisionFilterMax = max;
 		repaint();
 	}
 }
