@@ -10,4 +10,5 @@ public interface MapViewSettings {
     public void setViewLayerActors(boolean v);
     public void setViewLayerEvents(boolean v);
     public void setCollisionFilter(int min, int max);
+    public void setViewLayerSpriteMask(boolean v);
 }

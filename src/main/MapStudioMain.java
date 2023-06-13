@@ -28,6 +28,8 @@ import infoObjects.ActorInfo;
 import infoObjects.CollisionInfo;
 import infoObjects.EventInfo;
 import infoObjects.MapInfo;
+import infoObjects.MaskInfo;
+import infoObjects.SpriteMaskInfo;
 import infoObjects.TileInfo;
 import infoObjects.TileSetInfo;
 
@@ -217,16 +219,20 @@ public class MapStudioMain
 			Vector<Vector<TileInfo>> layers = new Vector<Vector<TileInfo>>();
 			Vector<ActorInfo> actors = new Vector<ActorInfo>();
 			Vector<EventInfo> events = new Vector<EventInfo>();
+			Vector<SpriteMaskInfo> spriteMasks = new Vector<SpriteMaskInfo>();
+			Vector<MaskInfo> masks = MaskInfo.generateStandardMask();
+			
 			Dimension dimension = new Dimension();
 			fileRead.read(openFile, dimension,
-					tileSetInfos, collisionMap, layers, actors, events);
+					tileSetInfos, collisionMap, layers, actors, events, spriteMasks, masks);
 			
 			int tileWidth = 8, tileHeight = 8;
 			MapDesktop mapEditor = new MapDesktop(MainFrame, dimension.width*tileWidth, dimension.height*tileHeight,
 					tileWidth, tileHeight);
 			
 			
-			setMapEditorData(mapEditor, tileSetInfos, collisionMap, layers, actors, events, dimension);
+			setMapEditorData(mapEditor, tileSetInfos, collisionMap, layers, actors, events, spriteMasks, masks,
+					dimension);
 			mapEditor.getMapInfo().setSaveFile(openFile);
 			
 			FilePane.addTab(openFile.getName(), mapEditor);
@@ -242,7 +248,8 @@ public class MapStudioMain
 	
 	private void setMapEditorData(MapDesktop mapEditor, Vector<TileSetInfo> tileSetInfos,
 	Vector<CollisionInfo> collisionMap, Vector<Vector<TileInfo>> layers,
-	Vector<ActorInfo> actors, Vector<EventInfo> events, Dimension dimension) {
+	Vector<ActorInfo> actors, Vector<EventInfo> events, Vector<SpriteMaskInfo> spriteMasks, 
+	Vector<MaskInfo> masks, Dimension dimension) {
 		for (TileSetInfo tileSetInfo : tileSetInfos) {
 			mapEditor.importTileSet(tileSetInfo);
 		}
@@ -268,6 +275,9 @@ public class MapStudioMain
 		
 		mapEditor.getMapInfo().getActors().addAll(actors);
 		mapEditor.getMapInfo().getEvents().addAll(events);
+		mapEditor.getMapInfo().getSpriteMasks().addAll(spriteMasks);
+		mapEditor.getMapInfo().getMasks().clear();
+		mapEditor.getMapInfo().getMasks().addAll(masks);
 	}
 	
 	public void setTileFromTileSet(TileInfo tileInfo, Vector<TileSetInfo> tileSets) {

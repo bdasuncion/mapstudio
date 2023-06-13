@@ -200,7 +200,7 @@ public class EventSettingDialog extends JDialog implements ActionListener, KeyLi
 	    	String types[] = new String[2];
 	    	types[0] = EventInfo.TYPE_NONE;
 	    	types[1] = EventInfo.TYPE_TRANSFER;
-	    	type = new JComboBox(types);
+	    	type = new JComboBox<String>(types);
 	    	
 	    	JPanel typePanel = new JPanel();
 	    	typePanel.add(type);

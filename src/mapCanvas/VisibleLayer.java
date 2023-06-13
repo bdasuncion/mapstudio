@@ -18,6 +18,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import infoObjects.SpriteMaskInfo;
 import interfaces.MapViewSettings;
 
 
@@ -35,6 +36,7 @@ public class VisibleLayer extends JPanel implements ItemListener, ActionListener
 	private JCheckBox grid;
 	private JCheckBox actorsLayer;
 	private JCheckBox eventsLayer;
+	private JCheckBox spriteMaskLayer;
 	private ButtonGroup collisionLayerViewFilter;
 	private JRadioButton selectAll;
 	private JRadioButton setMinMaxHeight;
@@ -51,8 +53,6 @@ public class VisibleLayer extends JPanel implements ItemListener, ActionListener
 	private boolean collisionFilterSelectAll = true;
 	private static final String ALL = "ALL";
 	private static final String BYHEIGHT = "BYHEIGHT";
-	private static final int MINHEIGHT = 0;
-	private static final int MAXHEIGHT = 1024;
 	MapViewSettings mapViewSettings;
 	
 	public VisibleLayer(MapViewSettings mvs) {
@@ -68,8 +68,8 @@ public class VisibleLayer extends JPanel implements ItemListener, ActionListener
 		selectAll.setActionCommand(ALL);
 		selectAll.addActionListener(this);
 		setMinMaxHeight = new JRadioButton("Filter by height");
-		minHeightModel = new SpinnerNumberModel(0, MINHEIGHT, MAXHEIGHT, 8);
-		maxHeightModel = new SpinnerNumberModel(0, MINHEIGHT, MAXHEIGHT, 8);
+		minHeightModel = new SpinnerNumberModel(0, SpriteMaskInfo.MINHEIGHT, SpriteMaskInfo.MAXHEIGHT, 8);
+		maxHeightModel = new SpinnerNumberModel(0, SpriteMaskInfo.MINHEIGHT, SpriteMaskInfo.MAXHEIGHT, 8);
 		setMinMaxHeight.setActionCommand(BYHEIGHT);
 		setMinMaxHeight.addActionListener(this);
 		collisionLayerViewFilter.add(selectAll);
@@ -106,6 +106,9 @@ public class VisibleLayer extends JPanel implements ItemListener, ActionListener
 		eventsLayer = new JCheckBox("Events");
 		eventsLayer.setSelected(false);
 		
+		spriteMaskLayer = new JCheckBox("Sprite Masks");
+		spriteMaskLayer.setSelected(false);
+		
 		collisonLayer.addItemListener(this);
 		
 		layer0.addItemListener(this);
@@ -115,6 +118,7 @@ public class VisibleLayer extends JPanel implements ItemListener, ActionListener
 		grid.addItemListener(this);
 		actorsLayer.addItemListener(this);
 		eventsLayer.addItemListener(this);
+		spriteMaskLayer.addItemListener(this);
 		
 		this.setLayout(new GridLayout(0, 1));
 		
@@ -131,6 +135,7 @@ public class VisibleLayer extends JPanel implements ItemListener, ActionListener
 		this.add(grid);
 		this.add(actorsLayer);
 		this.add(eventsLayer);
+		this.add(spriteMaskLayer);
 		
 	}
 
@@ -153,6 +158,8 @@ public class VisibleLayer extends JPanel implements ItemListener, ActionListener
 				 mapViewSettings.setViewLayerActors(false);
 			 } else if (e.getItemSelectable() == eventsLayer) {
 				 mapViewSettings.setViewLayerEvents(false);
+			 } else if (e.getItemSelectable() == spriteMaskLayer) {
+				 mapViewSettings.setViewLayerSpriteMask(false);
 			 }
 			 
 		 } else {
@@ -172,7 +179,9 @@ public class VisibleLayer extends JPanel implements ItemListener, ActionListener
 				 mapViewSettings.setViewLayerActors(true);
 			 } else if (e.getItemSelectable() == eventsLayer) {
 				 mapViewSettings.setViewLayerEvents(true);
-			 }		 
+			 } else if (e.getItemSelectable() == spriteMaskLayer) {
+				 mapViewSettings.setViewLayerSpriteMask(true);
+			 }	 
 		 }
 		 
 		 selectAll.setEnabled(collisonLayer.isSelected());
@@ -192,7 +201,7 @@ public class VisibleLayer extends JPanel implements ItemListener, ActionListener
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if (arg0.getActionCommand().contentEquals(ALL)) {
-			mapViewSettings.setCollisionFilter(MINHEIGHT, MAXHEIGHT);
+			mapViewSettings.setCollisionFilter(SpriteMaskInfo.MINHEIGHT, SpriteMaskInfo.MAXHEIGHT);
 			collisionFilterSelectAll = true;
 		} else {
 			mapViewSettings.setCollisionFilter(minHeightModel.getNumber().intValue(), 

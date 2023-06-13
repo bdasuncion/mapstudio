@@ -22,6 +22,8 @@ public class MapInfo {
 	Vector<String> tileSetNames;
 	Vector<EventInfo> events;
 	Vector<ActorInfo> actors;
+	Vector<SpriteMaskInfo> spriteMasks;
+	Vector<MaskInfo> masks;
 	private File saveFile;
 	
 	public static final int TILE_START_IDX = 1;
@@ -35,6 +37,8 @@ public class MapInfo {
     	tileSetNames = new Vector<String>();
     	events = new Vector<EventInfo>();
     	actors =  new Vector<ActorInfo>();
+    	spriteMasks = new Vector<SpriteMaskInfo>();
+    	masks = MaskInfo.generateStandardMask();
     	
     	widthInTiles = width;
     	heightInTiles = height;
@@ -188,6 +192,14 @@ public class MapInfo {
 		return actors;
 	}
 	
+	public Vector<SpriteMaskInfo> getSpriteMasks() {
+		return spriteMasks;
+	}
+
+	public Vector<MaskInfo> getMasks() {
+		return masks;
+	}
+
 	public Vector<PalletteInfo> getPallete() {
 		return paletteInfos;
 	}

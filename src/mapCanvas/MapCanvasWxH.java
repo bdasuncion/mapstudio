@@ -23,6 +23,8 @@ import infoObjects.CollisionInfo;
 import infoObjects.EventInfo;
 import infoObjects.EventTransferMapInfo;
 import infoObjects.MapInfo;
+import infoObjects.SpriteMaskBoundsInfo;
+import infoObjects.SpriteMaskInfo;
 import infoObjects.TileInfo;
 import infoObjects.TileSetInfo;
 import interfaces.MapControls;
@@ -46,6 +48,7 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 	private boolean layer3Visible = true;
 	private boolean actorsVisible = false;
 	private boolean eventsVisible = false;
+	private boolean spriteMasksVisible = true;
 	
 	private int scale = 1;
 	
@@ -77,9 +80,11 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 	TileSetting tileSettingMouseAdapter;
 	EventSetting eventSettingMouseAdapter;
 	ActorSetting actorSettingMouseAdapter;
+	SpriteMaskSetting spriteMaskSettingMouseAadapter;
 	
 	private ActorSettingDialog actorSettingDialog;
 	private EventSettingDialog eventSettingDialog;
+	private SpriteMaskSettingDialog spriteMaskSettingDialog;
 	
 	public MapCanvasWxH(MapInfo mi, int widthInPixels, int heightInPixels, 
 	int widthOfTile, int heightOfTile) {
@@ -112,12 +117,14 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 		tileSettingMouseAdapter = new TileSetting();
 		actorSettingMouseAdapter = new ActorSetting();
 		eventSettingMouseAdapter = new EventSetting();
+		spriteMaskSettingMouseAadapter = new SpriteMaskSetting();
 		
 		this.addMouseListener(tileSettingMouseAdapter);
 		this.addMouseMotionListener(tileSettingMouseAdapter);
 		
 		actorSettingDialog = new ActorSettingDialog(null);
 		eventSettingDialog = new EventSettingDialog(null);
+		spriteMaskSettingDialog = new SpriteMaskSettingDialog(null, mapInfo.getMasks());
 	}
 	
 	public void setScale(int s) {
@@ -181,6 +188,10 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 		    drawEvents(g2D, display);
 		}
 		
+		if (spriteMasksVisible) {
+			drawSpriteMasks(g2D, display);
+		}
+		
 		drawMapStamp(g2D, display);
 		
 		xTileSetPositionPrev = xTileHighlightPosition;
@@ -189,6 +200,16 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 		g2D.dispose();
 	}
 	
+	private void drawSpriteMasks(Graphics2D g2D, BufferedImage display) {
+		for (SpriteMaskInfo spriteMask: mapInfo.getSpriteMasks()) {
+			SpriteMaskBoundsInfo bounds = spriteMask.getBounds();
+			g2D.setColor(new Color(255, 0, 0, 255));
+			g2D.drawRect(bounds.getStartX(), bounds.getStartY(), bounds.getEndX() - bounds.getStartX(), bounds.getEndY() - bounds.getStartY());
+			g2D.drawImage(spriteMask.getMask(), bounds.getStartX(), bounds.getStartY() - spriteMask.getZ(), bounds.getEndX() - bounds.getStartX(), bounds.getEndY() - bounds.getStartY(), this);
+			g2D.drawString(Integer.toString(spriteMask.getZ()), spriteMask.getX() - 8, bounds.getStartY() - spriteMask.getZ() + 16);
+		}
+	}
+
 	private void drawCollision(Graphics2D g2D, BufferedImage display) {
 		int collisionX = 0;
 		int collisionY = 0;
@@ -270,9 +291,16 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 		for (ActorInfo actor : mapInfo.getActors()) {
 			g2D.setColor(new Color(255, 0, 0, 75));
 			g2D.fillOval(actor.getX() - 8, actor.getY() - 8, 16, 16);
+			g2D.setColor(new Color(0, 255, 0, 255));
+			g2D.drawLine(actor.getX(), actor.getY(), actor.getX(), actor.getY() - actor.getZ());
+			g2D.setColor(new Color(255, 255, 255, 128));
+			g2D.fillOval(actor.getX() - 8, actor.getY() - 8 - actor.getZ(), 16, 16);
 			g2D.setColor(Color.BLUE);
 			g2D.setFont(new Font(g2D.getFont().getFontName(), Font.ITALIC, 6));
 		    g2D.drawString(actor.getType(), actor.getX() - 8, actor.getY());
+		    g2D.setColor(Color.RED);
+		    g2D.setFont(new Font(g2D.getFont().getFontName(), Font.ITALIC, 7));
+			g2D.drawString(Integer.toString(actor.getZ()), actor.getX() - 2, actor.getY() - actor.getZ());
 		}
 	}
 	
@@ -302,25 +330,6 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 		g2D.drawString(info.getTransferToMap() + ":(" + info.getTransferToX()+ ", " + info.getTransferToY() + ")", 
 			info.getX(), info.getY() + 12);
 	}
-	/*TODO
-	 * get tile dimension from MapWxH Layer so even if
-	 * collision dimension is different from tile dimension, this part
-	 * will still get thye correct results
-	 * */
-	
-	/*public void processMouseMotionEvent(MouseEvent e) {	
-		//int highlightW = Layer[activeLayerIndex].getWidthOfTile();
-		//int highlightH = Layer[activeLayerIndex].getWidthOfTile();
-		int highlightW = 16;
-		int highlightH = 16;
-		
-		xTileSetPosition = (e.getX()/(highlightW*scale))*(highlightW);
-		yTileSetPosition = (e.getY()/(highlightH*scale))*(highlightH);
-		
-		if(xTileSetPositionPrev != xTileSetPosition || yTileSetPositionPrev != yTileSetPosition) {
-			this.repaint();
-		}
-	}*/
 	
 	public void processMouseWheelEvent(MouseWheelEvent e) {
     	if(e.getWheelRotation() > 0 && scale > 1) {
@@ -443,6 +452,12 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 		repaint();
 	}
 	
+	@Override
+	public void setViewLayerSpriteMask(boolean v) {
+		spriteMasksVisible = v;
+		repaint();
+	}
+	
 	protected class TileSetting extends MouseInputAdapter {
 		//@Override
 		int xTileSetPostion;
@@ -556,21 +571,40 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 			}
 		}
 	}
+	
+	private class SpriteMaskSetting extends MouseInputAdapter {
+		@Override
+		public void mousePressed(MouseEvent e) {
+			if(e.getID() == MouseEvent.MOUSE_PRESSED && e.getButton() == MouseEvent.BUTTON1) {
+				int snapToWidth = 16;
+				int snapToHeight = 16;
+				
+				xTileHighlightPosition = (e.getX()/(snapToWidth*scale));//*(setW);
+				yTileHighlightPosition = (e.getY()/(snapToHeight*scale));//*(setH);
+				
+				spriteMaskSettingDialog.setSpriteMaskList((xTileHighlightPosition*snapToWidth) + (snapToWidth/2), 
+						(yTileHighlightPosition*snapToHeight) + (snapToHeight/2), snapToWidth, snapToHeight, 
+						mapInfo.getSpriteMasks());
+				spriteMaskSettingDialog.setVisible(true);
+				repaint();
+			}
+		}
+	}
 
 	@Override
 	public void setModeTile() {
-		// TODO Auto-generated method stub
 		this.removeMouseListener(eventSettingMouseAdapter);
 		this.removeMouseListener(actorSettingMouseAdapter);
+		this.removeMouseListener(spriteMaskSettingMouseAadapter);
 		this.addMouseListener(tileSettingMouseAdapter);
 		this.addMouseMotionListener(tileSettingMouseAdapter);
 	}
 
 	@Override
 	public void setModeEvent() {
-		// TODO Auto-generated method stub
 		this.removeMouseListener(tileSettingMouseAdapter);
 		this.removeMouseListener(actorSettingMouseAdapter);
+		this.removeMouseListener(spriteMaskSettingMouseAadapter);
 		this.removeMouseMotionListener(tileSettingMouseAdapter);
 		this.addMouseListener(eventSettingMouseAdapter);
 		this.addMouseMotionListener(tileSettingMouseAdapter);
@@ -578,11 +612,21 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 
 	@Override
 	public void setModeActor() {
-		// TODO Auto-generated method stub
+		this.removeMouseListener(tileSettingMouseAdapter);
+		this.removeMouseListener(eventSettingMouseAdapter);
+		this.removeMouseListener(spriteMaskSettingMouseAadapter);
+		this.removeMouseMotionListener(tileSettingMouseAdapter);
+		this.addMouseListener(actorSettingMouseAdapter);
+		this.addMouseMotionListener(tileSettingMouseAdapter);
+	}
+	
+
+	@Override
+	public void setModeSpriteMask() {
 		this.removeMouseListener(tileSettingMouseAdapter);
 		this.removeMouseListener(eventSettingMouseAdapter);
 		this.removeMouseMotionListener(tileSettingMouseAdapter);
-		this.addMouseListener(actorSettingMouseAdapter);
+		this.addMouseListener(spriteMaskSettingMouseAadapter);
 		this.addMouseMotionListener(tileSettingMouseAdapter);
 	}
 

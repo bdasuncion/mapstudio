@@ -13,14 +13,21 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 
 import infoObjects.ActorInfo;
 
 public class ActorSettingDialog extends JDialog implements ActionListener, KeyListener {
 	JTextField nameField;
 	JLabel nameLabel;
+	JLabel heightLabel;
+	JSpinner height;
+	SpinnerNumberModel heightModel;
 	
+	private static final int ACTOR_MINHEIGHTPOS = 0;
+	private static final int ACTOR_MAXHEIGHTPOS = 1024;
 	static private final String OK = "OK";
 	static private final String CANCEL = "CANCEL";
 	
@@ -37,10 +44,16 @@ public class ActorSettingDialog extends JDialog implements ActionListener, KeyLi
     	nameField.setPreferredSize(new Dimension(100, 20));
     	nameField.addKeyListener(this);
     	nameLabel = new JLabel("Name");
+    	
+    	heightModel = new SpinnerNumberModel(ACTOR_MINHEIGHTPOS, ACTOR_MINHEIGHTPOS, ACTOR_MAXHEIGHTPOS, 1);
+    	height = new JSpinner(heightModel);
+    	heightLabel = new JLabel("Height Position");
     	JPanel namePanel = new JPanel();
     	namePanel.add(nameLabel);
     	namePanel.add(nameField);
-    	
+    	namePanel.add(heightLabel);  
+    	namePanel.add(height);    	
+
     	okButton = new JButton("OK");
     	okButton.setActionCommand(OK);
     	okButton.addActionListener(this);
@@ -73,6 +86,7 @@ public class ActorSettingDialog extends JDialog implements ActionListener, KeyLi
 			if (x == actorInfo.getX() && y == actorInfo.getY()) {
 				info = actorInfo;
 				nameField.setText(info.getType());
+				heightModel.setValue(info.getZ());
 			}
 		}
     	nameField.requestFocus();
@@ -84,6 +98,7 @@ public class ActorSettingDialog extends JDialog implements ActionListener, KeyLi
 			if (info != null) {
 				if (!nameField.getText().contentEquals("")) {
 				    info.setType(nameField.getText());
+				    info.setZ((int) heightModel.getNumber().intValue());
 				} else {
 					actors.remove(info);
 				}
@@ -92,6 +107,7 @@ public class ActorSettingDialog extends JDialog implements ActionListener, KeyLi
 				info.setType(nameField.getText());
 				info.setX(x);
 				info.setY(y);
+				info.setZ((int) heightModel.getNumber().intValue());
 				actors.add(info);
 			}
 		}

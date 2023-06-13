@@ -35,6 +35,8 @@ import infoObjects.EventInfo;
 import infoObjects.EventTransferMapInfo;
 import infoObjects.MapInfo;
 import infoObjects.MapLayerInfo;
+import infoObjects.MaskInfo;
+import infoObjects.SpriteMaskInfo;
 import infoObjects.TileInfo;
 import infoObjects.TileSetInfo;
 import mapBlock.Map32x32Tiles;
@@ -77,6 +79,7 @@ public class MapFileReaderWriter {
 	private static final String ACTOR = "actor";
 	private static final String ACTOR_XPOS = "actor_xpos";
 	private static final String ACTOR_YPOS = "actor_ypos";
+	private static final String ACTOR_ZPOS = "actor_zpos";
 	private static final String ACTOR_TYPE = "actor_type";
 	
 	private static final String EVENTS = "events";
@@ -91,6 +94,15 @@ public class MapFileReaderWriter {
 	private static final String EVENTTRANSFER_X = "eventtransfer_x";
 	private static final String EVENTTRANSFER_Y = "eventtransfer_y";
 	private static final String EVENTTRANSFER_DIRECTION = "eventtransfer_direction";
+	
+	private static final String SPRITEMASKS = "spritemasks";
+	private static final String SPRITEMASK = "spritemask";
+	private static final String SPRITEMASK_ID = "spritemask_id";
+	private static final String SPRITEMASK_TYPE = "spritemask_type";
+	private static final String SPRITEMASK_X = "spritemask_x";
+	private static final String SPRITEMASK_Y = "spritemask_y";
+	private static final String SPRITEMASK_Z = "spritemask_z";
+	private static final String SPRITEMASK_NAME = "spritemask_name";
 	
 
 	public MapFileReaderWriter() {
@@ -127,6 +139,8 @@ public class MapFileReaderWriter {
 		
 		rootElement.appendChild(createEvents(doc, mapInfo.getEvents()));
 		
+		rootElement.appendChild(createMasks(doc, mapInfo.getSpriteMasks()));
+		
 		for (MapLayerInfo mapLayer : mapInfo.getMapLayers()) {
 			rootElement.appendChild(createMapEntry(doc, mapLayer));
 		}
@@ -150,6 +164,40 @@ public class MapFileReaderWriter {
 		}
 	}
 	
+	private Node createMasks(Document doc, Vector<SpriteMaskInfo> spriteMasks) {
+		Element eventsElement = doc.createElement(SPRITEMASKS);
+		for (SpriteMaskInfo spriteMask: spriteMasks) {
+			eventsElement.appendChild(createMask(doc, spriteMask));
+		}
+		
+		return eventsElement;
+	}
+	
+	private Element createMask(Document doc, SpriteMaskInfo spriteMask) {
+		Element event = doc.createElement(SPRITEMASK);
+		Element type = doc.createElement(SPRITEMASK_TYPE);
+		type.appendChild(doc.createTextNode(Integer.toString(spriteMask.getType().ordinal())));
+		Element x = doc.createElement(SPRITEMASK_X);
+		x.appendChild(doc.createTextNode(Integer.toString(spriteMask.getX())));
+		Element y = doc.createElement(SPRITEMASK_Y);
+		y.appendChild(doc.createTextNode(Integer.toString(spriteMask.getY())));
+		Element z = doc.createElement(SPRITEMASK_Z);
+		z.appendChild(doc.createTextNode(Integer.toString(spriteMask.getZ())));
+		Element id  = doc.createElement(SPRITEMASK_ID);
+		id.appendChild(doc.createTextNode(Integer.toString(spriteMask.getId())));
+		Element name  = doc.createElement(SPRITEMASK_NAME);
+		name.appendChild(doc.createTextNode(spriteMask.getName()));
+		
+		event.appendChild(type);
+		event.appendChild(x);
+		event.appendChild(y);
+		event.appendChild(z);
+		event.appendChild(id);
+		event.appendChild(name);
+		
+		return event;
+	}
+
 	private Element createEvents(Document doc, Vector<EventInfo> events) {
 		Element eventsElement = doc.createElement(EVENTS);
 		for (EventInfo eventInfo: events) {
@@ -221,10 +269,13 @@ public class MapFileReaderWriter {
 		x.appendChild(doc.createTextNode(Integer.toString(actorInfo.getX())));
 		Element y = doc.createElement(ACTOR_YPOS);
 		y.appendChild(doc.createTextNode(Integer.toString(actorInfo.getY())));
+		Element z = doc.createElement(ACTOR_ZPOS);
+		z.appendChild(doc.createTextNode(Integer.toString(actorInfo.getZ())));
 		
 		actor.appendChild(type);
 		actor.appendChild(x);
 		actor.appendChild(y);
+		actor.appendChild(z);
 		
 		return actor;
 	}
@@ -342,7 +393,8 @@ public class MapFileReaderWriter {
 	}
 
 	public void read(File f, Dimension dimension, Vector<TileSetInfo> tileSetInfo, Vector<CollisionInfo> collisionInfos, 
-			Vector<Vector<TileInfo>> layers, Vector<ActorInfo> actors, Vector<EventInfo> events) {
+			Vector<Vector<TileInfo>> layers, Vector<ActorInfo> actors, Vector<EventInfo> events, 
+			Vector<SpriteMaskInfo> spriteMasks, Vector<MaskInfo> masks) {
 		// File fileOut = new File(f.getParent() + "\\" +
 		// this.appendExtension(f.getName()));
 		String fileDirectory = f.getParent();
@@ -425,6 +477,17 @@ public class MapFileReaderWriter {
 				Element eElement = (Element) eventsListNode;
 				if (eElement.getTagName().matches(EVENTS)) {
 					readEventsEntry(eElement.getChildNodes(), events);
+				}
+			}
+		}
+		
+		NodeList spriteMaskList = doc.getElementsByTagName(SPRITEMASKS);
+		for (int idx = 0; idx < spriteMaskList.getLength(); idx++) {
+			Node eventsListNode = spriteMaskList.item(idx);
+			if (eventsListNode.getNodeType() == Node.ELEMENT_NODE) {
+				Element eElement = (Element) eventsListNode;
+				if (eElement.getTagName().matches(SPRITEMASKS)) {
+					readSpriteMaskEntry(eElement.getChildNodes(), spriteMasks, masks);
 				}
 			}
 		}
@@ -629,7 +692,9 @@ public class MapFileReaderWriter {
 					actorInfo.setX(Integer.parseInt(eElement.getTextContent()));
 				} else if (eElement.getTagName().matches(ACTOR_YPOS)) {
 					actorInfo.setY(Integer.parseInt(eElement.getTextContent()));
-				} else if (eElement.getTagName().matches(ACTOR_TYPE)) {
+				} else if (eElement.getTagName().matches(ACTOR_ZPOS)) {
+					actorInfo.setZ(Integer.parseInt(eElement.getTextContent()));
+				} else  if (eElement.getTagName().matches(ACTOR_TYPE)) {
 					actorInfo.setType(eElement.getTextContent());
 				}
 			}
@@ -684,5 +749,49 @@ public class MapFileReaderWriter {
 		}
 		
 		return eventInfo;
+	}
+	
+	public void readSpriteMaskEntry(NodeList spriteMasksEntry, Vector<SpriteMaskInfo> spriteMasks, Vector<MaskInfo> masks) {
+		for (int idx = 0; idx < spriteMasksEntry.getLength(); idx++) {
+			Node spriteMaskCollection = spriteMasksEntry.item(idx);
+			if (spriteMaskCollection.getNodeType() == Node.ELEMENT_NODE) {
+				Element eElement = (Element) spriteMaskCollection;
+				if (eElement.getTagName().matches(SPRITEMASK)) {
+					spriteMasks.add(readSpriteMask(eElement.getChildNodes(), masks));
+				}
+			}
+		}
+	}
+
+	private SpriteMaskInfo readSpriteMask(NodeList spriteMask, Vector<MaskInfo> masks) {
+		
+		SpriteMaskInfo spriteMaskInfo = new SpriteMaskInfo();
+		
+		for (int idx = 0; idx < spriteMask.getLength(); idx++) {
+			Node tileSetAttributeNode = spriteMask.item(idx);
+			if (tileSetAttributeNode.getNodeType() == Node.ELEMENT_NODE) {
+				Element eElement = (Element) tileSetAttributeNode;
+
+				if (eElement.getTagName().matches(SPRITEMASK_X)) {
+					spriteMaskInfo.setX(Integer.parseInt(eElement.getTextContent()));
+				} else if (eElement.getTagName().matches(SPRITEMASK_Y)) {
+					spriteMaskInfo.setY(Integer.parseInt(eElement.getTextContent()));
+				} else if (eElement.getTagName().matches(SPRITEMASK_Z)) {
+					spriteMaskInfo.setZ(Integer.parseInt(eElement.getTextContent()));
+				} else if (eElement.getTagName().matches(SPRITEMASK_ID)) {
+					spriteMaskInfo.setId(Integer.parseInt(eElement.getTextContent()));
+				} else if (eElement.getTagName().matches(SPRITEMASK_NAME)) {
+					spriteMaskInfo.setName(eElement.getTextContent());
+					for (MaskInfo mask: masks) {
+						if (spriteMaskInfo.getName().contentEquals(mask.getName())) {
+							spriteMaskInfo.setMask(mask.getMask());
+							spriteMaskInfo.setType(mask.getType());
+						}
+					}
+				}
+			}
+		}
+		
+		return spriteMaskInfo;
 	}
 };

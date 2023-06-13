@@ -35,6 +35,7 @@ public class ImageTools
 		WritableRaster wRaster = Raster.createPackedRaster(data, width, height, pixelSize, new Point(0,0));
 		
 		image.setData(wRaster);
+		
 		return image;
 	}
 	
@@ -50,7 +51,6 @@ public class ImageTools
 		int pixelSize = cm.getPixelSize();
 		
 		DataBuffer data = image.getData().getDataBuffer();
-		
 		for(int i = 0; i<width*height*pixelSize/8; i++ )
 		{
 			data.setElem(i, (byte)0);
@@ -60,6 +60,22 @@ public class ImageTools
 		
 		image.setData(wRaster);
 		return image;
+	}
+	
+	public static IndexColorModel createColorModel() {
+		byte R[],G[],B[],A[];
+		
+		R = new byte[16];
+		G = new byte[16];
+		B = new byte[16];
+		A = new byte[16];
+
+		R[0] = G[0] = B[0] = (byte)(255);
+		A[0] = (byte)0;
+		A[1] = (byte)255;
+		
+		IndexColorModel cm = new IndexColorModel(4,16,R,G,B,A);
+		return cm;
 	}
 	
 	public static BufferedImage createEmptyImage(int width, int height) {
@@ -319,5 +335,18 @@ public class ImageTools
 		
 		return createBufferedImage(img.getWidth(), img.getHeight(), 
 				(IndexColorModel)img.getColorModel(), dataBytes);
+	}
+	
+	public static BufferedImage fill(BufferedImage image) {
+		IndexColorModel cm = (IndexColorModel)image.getColorModel();
+		int rgb[] = new int[cm.getMapSize()];
+		cm.getRGBs(rgb);
+		for (int i = 0; i < image.getHeight(); ++i) {
+			for (int j = 0; j < image.getWidth(); ++j) {
+				image.setRGB(j, i, rgb[1]);
+			}
+		}
+		
+		return image;
 	}
 }

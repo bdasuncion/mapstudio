@@ -26,6 +26,7 @@ public class ModeSetting extends JPanel implements ActionListener
 	private static String TILESET = "TILESET";
 	private static String EVENTSET = "EVENTSET";
 	private static String ACTORSET = "ACTORSET";
+	private static String SPRITEMASKSET = "SPRITEMASKSET";
 	public ModeSetting(ModeSelectionInterface msi) {
 		super();
 		
@@ -36,24 +37,29 @@ public class ModeSetting extends JPanel implements ActionListener
 		modeEventSet.setActionCommand(EVENTSET);
 		JRadioButton modeActorSet = new JRadioButton("Actor Set");
 		modeActorSet.setActionCommand(ACTORSET);
+		JRadioButton modeSpriteMaskSet = new JRadioButton("Sprite Mask Set");
+		modeSpriteMaskSet.setActionCommand(SPRITEMASKSET);
 		
 		modeTileSet.setSelected(true);
 
 		modeTileSet.addActionListener(this);
 		modeEventSet.addActionListener(this);
 		modeActorSet.addActionListener(this);
+		modeSpriteMaskSet.addActionListener(this);
 		
 		ButtonGroup group = new ButtonGroup();
 		group.add(modeTileSet);
 		group.add(modeEventSet);		
 		group.add(modeActorSet);
+		group.add(modeSpriteMaskSet);
 		
 		this.setLayout(new GridLayout(0, 1));
 		
 		this.add(new JLabel("Select Mode"));
 		this.add(modeTileSet);
 		this.add(modeEventSet);
-		this.add(modeActorSet);		
+		this.add(modeActorSet);
+		this.add(modeSpriteMaskSet);	
 	}
 	
 	public void actionPerformed(ActionEvent e) {
@@ -63,6 +69,8 @@ public class ModeSetting extends JPanel implements ActionListener
 			modeSelection.setModeTile();
 		} else if (e.getActionCommand().matches(EVENTSET)) {
 			modeSelection.setModeEvent();
+		} else if (e.getActionCommand().matches(SPRITEMASKSET)) {
+			modeSelection.setModeSpriteMask();
 		}
 	}
 }

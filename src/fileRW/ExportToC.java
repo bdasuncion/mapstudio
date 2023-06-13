@@ -14,7 +14,9 @@ import infoObjects.EventInfo;
 import infoObjects.EventTransferMapInfo;
 import infoObjects.MapInfo;
 import infoObjects.MapLayerInfo;
+import infoObjects.MaskInfo;
 import infoObjects.PalletteInfo;
+import infoObjects.SpriteMaskInfo;
 import infoObjects.TileInfo;
 import infoObjects.TileSetInfo;
 import mapBlock.Map32x32Tiles;
@@ -180,7 +182,58 @@ public class ExportToC {
 		
 		writeEvents(f, cFile, mapInfo.getEvents());
 		
+		writeMasks(f, cFile, mapInfo.getMasks());
+		
+		writeSpriteMasks(f, cFile, mapInfo.getSpriteMasks());
+		
 		writeMapInfo(f, cFile, mapInfo);
+	}
+
+	private static void writeSpriteMasks(File f, FileWriter cFile, Vector<SpriteMaskInfo> spriteMasks) {
+		try {
+			cFile.write("const SpriteMaskInit spritemask_" + getFileName(f).toLowerCase() + "[] = {\n");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		for (SpriteMaskInfo spriteMaskInfo : spriteMasks) {
+			try {
+				cFile.write("\t{ ");
+				cFile.write(spriteMaskInfo.getX() + ", " + spriteMaskInfo.getY() + ", " + spriteMaskInfo.getZ() + ", " + 
+				"" + spriteMaskInfo.getId() + "," + spriteMaskInfo.getTypeToString());
+				cFile.write(" }, ");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		try {
+			cFile.write("\n};\n");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void writeMasks(File f, FileWriter cFile, Vector<MaskInfo> masks) {
+		try {
+			cFile.write("const SpriteMaskImage spritemaskimage_" + getFileName(f).toLowerCase() + "[] = {\n");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		for (MaskInfo maskInfo : masks) {
+			try {
+				cFile.write("\t{ ");
+				cFile.write(maskInfo.getTypeToString() + ", " + "imageName");
+				cFile.write(" }, ");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		try {
+			cFile.write("\n};\n");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private static void writeMapEntry(File f, FileWriter cFile, Vector<MapLayerInfo> mapLayers) {
@@ -337,7 +390,7 @@ public class ExportToC {
 		for (ActorInfo actorInfo : actors) {
 			try {
 				cFile.write("\t{ ");
-				cFile.write(actorInfo.getX() + ", " + actorInfo.getY() + ", " + actorInfo.getType());
+				cFile.write(actorInfo.getX() + ", " + actorInfo.getY() + ", " + actorInfo.getZ() + ", " + actorInfo.getType());
 				cFile.write(" }, ");
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -461,10 +514,11 @@ public class ExportToC {
 					+ (mapInfo.getWidthInTiles()*8) + ", " + (mapInfo.getHeightInTiles()*8) + ", "
 					+ "2, " + (mapInfo.getTileSets().size() - 1) + ", " + mapInfo.getPallete().size()
 					+ ", " + mapInfo.getEvents().size() + ", " + mapInfo.getActors().size() + ", "
+					+ mapInfo.getSpriteMasks().size() + ", " + (mapInfo.getMasks().size() - MaskInfo.genericMasks.length) + ", "
 					+ "NULL " + ", mapentryset_" + name + ", tileset_" + name
-					//+ ", pallette_" + name + ",\n transfer_" + name + ", collision_" + name + ", actors_" + name + 
-					+ ", pallette_" + name + ",\ntransfer_" + name + ", heightMap_" + name + ", actors_" + name + 
-					", NULL, NULL, NULL, NULL, {0,0,0,0,0} };\n" );
+					+ ", pallette_" + name + ",\ntransfer_" + name + ", heightMap_" + name + ", actors_" + name
+					+ ", spritemask_" + name + ", spritemaskimage_" + name
+					+ ", NULL, NULL, NULL, NULL, {0,0,0,0,0} };\n" );
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
