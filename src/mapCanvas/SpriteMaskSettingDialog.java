@@ -39,6 +39,7 @@ public class SpriteMaskSettingDialog extends JDialog implements MaskImportFuncti
 	JComboBox type;
 	JButton okButton;
 	JButton cancelButton;
+	JButton deleteButton;
 	
 	MaskImageDisplay maskDisplay;
 	SpriteMaskInfo spriteMaskInfo = null;
@@ -49,6 +50,7 @@ public class SpriteMaskSettingDialog extends JDialog implements MaskImportFuncti
 	private static final String MASKTYPE = "MASKTYPE";
 	private static final String OK = "OK";
 	private static final String CANCEL = "CANCEL";
+	private static final String DELETE = "DELETE";
 	
 	Vector<MaskInfo> masks;
 	
@@ -90,9 +92,15 @@ public class SpriteMaskSettingDialog extends JDialog implements MaskImportFuncti
     	cancelButton.setActionCommand(CANCEL);
     	cancelButton.addActionListener(this);
     	
+    	deleteButton = new JButton("Delete");
+    	deleteButton.setActionCommand(DELETE);
+    	deleteButton.addActionListener(this);
+    	deleteButton.setVisible(false);
+    	
     	JPanel buttonPanel = new JPanel();
     	buttonPanel.add(okButton);
     	buttonPanel.add(cancelButton);
+    	buttonPanel.add(deleteButton);
     	
 		JPanel mainPanel = new JPanel();
 		mainPanel.add(maskImagePanel);
@@ -116,6 +124,7 @@ public class SpriteMaskSettingDialog extends JDialog implements MaskImportFuncti
     	this.y = y;
     	this.snapToWidth = snapToWidth;
     	this.snapToHeight = snapToHeight;
+    	deleteButton.setVisible(false);
     	for (SpriteMaskInfo spriteMaskInfo: spriteMasks) {
     		SpriteMaskBoundsInfo bounds = spriteMaskInfo.getBounds();
     		if (x >= bounds.getStartX() && x <= bounds.getEndX() &&
@@ -127,6 +136,7 @@ public class SpriteMaskSettingDialog extends JDialog implements MaskImportFuncti
     			for (int i = 0; i < maskSelection.getItemCount(); ++i) {
     				if (maskSelection.getItemAt(i).toString().contentEquals(spriteMaskInfo.toString())) {
     					maskSelection.setSelectedIndex(i);
+    					deleteButton.setVisible(true);
     					break;
     				}
     			}
@@ -194,6 +204,9 @@ public class SpriteMaskSettingDialog extends JDialog implements MaskImportFuncti
 			}
 			setVisible(false);
 		} else if (e.getActionCommand().contentEquals(CANCEL)) {
+			setVisible(false);
+		}  else if (e.getActionCommand().contentEquals(DELETE)) {
+			this.spriteMasks.remove(spriteMaskInfo);
 			setVisible(false);
 		}
 	}
