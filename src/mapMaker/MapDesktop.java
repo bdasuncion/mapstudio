@@ -94,7 +94,7 @@ public class MapDesktop extends JDesktopPane
 		mapFrame = new MapCanvasInternalFrame(mapInfo, width, height, tileWidth, tileHeight);
 		mapView = mapFrame.getMapView();
 
-		tileSetFrame = new TileSetInternalFrame(owner, tileWidth, tileHeight, mapView, mapView);
+		tileSetFrame = new TileSetInternalFrame(owner, tileWidth, tileHeight, mapView, mapView, mapView);
 		
 		mapPaletteFrame = new JInternalFrame("Palette", false, true);
 		mapPaletteFrame.setLayout(new GridLayout(2,1));

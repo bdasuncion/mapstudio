@@ -7,6 +7,7 @@ import javax.swing.JInternalFrame;
 import javax.swing.JScrollPane;
 
 import infoObjects.TileSetInfo;
+import interfaces.MapTileSettingModeSelection;
 import interfaces.TileSetDetailsSetting;
 import interfaces.TileSetManipulation;
 import interfaces.TileSetPanelDisplay;
@@ -25,11 +26,14 @@ TileSetting, TileSetDetailsSetting {
 	private boolean layerDisplayed = false;
 	JScrollPane frameView;
 	TileSetInfo tileSetInfo;
+	private boolean isTileMode = true;
+	private boolean isHeightMapMode = false;
 	
-    public TileSetInternalFrame(JFrame parent , int tileW, int tileH, TileSetting ts, TileSetManipulation tsm) {
+    public TileSetInternalFrame(JFrame parent , int tileW, int tileH, TileSetting ts, TileSetManipulation tsm, 
+    		MapTileSettingModeSelection mtms) {
     	super("Tile Set to Map", true, true);
     	
-    	tileSetPanel = new TileSetControlPanel(parent, tsm, this);
+    	tileSetPanel = new TileSetControlPanel(parent, tsm, this, mtms);
     	
     	mapTileSet =  new TileSetPanel(tileW, tileH, ts);
     	tileSetLayerSettingsPanel =  new TileSetLayerSettingsPanel(tileW, tileH, ts);
@@ -57,6 +61,8 @@ TileSetting, TileSetDetailsSetting {
 	public void showTileSet() {
 		mapTileSet.setScale(((TileSetPanel)frameView.getViewport().getView()).getScale());
 		frameView.setViewportView(mapTileSet);
+		isTileMode = true;
+		isHeightMapMode = false;
 		layerDisplayed = false;
 		repaint();
 	}
@@ -69,6 +75,8 @@ TileSetting, TileSetDetailsSetting {
 		}
 		tileSetLayerSettingsPanel.setScale(((TileSetPanel)frameView.getViewport().getView()).getScale());
 		frameView.setViewportView(tileSetLayerSettingsPanel);
+		isTileMode = true;
+		isHeightMapMode = false;
 		layerDisplayed = true;
 		repaint();
 	}
@@ -78,6 +86,8 @@ TileSetting, TileSetDetailsSetting {
 		tileSetCollisionSetting.setScale(((TileSetPanel)frameView.getViewport().getView()).getScale());
 		frameView.setViewportView(tileSetCollisionSetting);
 		layerDisplayed = false;
+		isTileMode = false;
+		isHeightMapMode = true;
 		repaint();
 	}
 

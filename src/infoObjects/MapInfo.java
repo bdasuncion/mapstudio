@@ -61,7 +61,7 @@ public class MapInfo {
 		return tileSets;
 	}
     
-    public void setTileSetToMap(int x, int y, TileSetInfo tsi) {
+    public void setTileSetToMap(int x, int y, TileSetInfo tsi, boolean isSetTiles,  boolean isSetCollision) {
     	
     	if (tsi == null) {
     		return;
@@ -71,16 +71,18 @@ public class MapInfo {
     	for (int i = 0; i < height; ++i) {
     		for (int j = 0; j < width; ++j) {
     			TileInfo tileInfo = tiles.get(j + i*width);
-    			if (tileInfo.getSetToLayer() != TileInfo.NO_SET_LAYER) {
+    			if (tileInfo.getSetToLayer() != TileInfo.NO_SET_LAYER && isSetTiles) {
     			    mapLayers.get(tileInfo.getSetToLayer()).setTileAt(x + j, y + i, tileInfo); 
     			}
     		}
     	}
     	
-    	for (int i = 0; i < height/2; ++i) {
-    		for (int j = 0; j < width/2; ++j) {
-    			setCollisionAt(x/2 + j, y/2 + i, tsi.getCollision().get(j + i*width/2));
-    		}
+    	if (isSetCollision) {
+	    	for (int i = 0; i < height/2; ++i) {
+	    		for (int j = 0; j < width/2; ++j) {
+	    			setCollisionAt(x/2 + j, y/2 + i, tsi.getCollision().get(j + i*width/2));
+	    		}
+	    	}
     	}
     }
 

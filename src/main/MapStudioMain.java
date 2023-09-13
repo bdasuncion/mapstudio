@@ -48,6 +48,7 @@ public class MapStudioMain
 	private JMenuItem export;
 	private JMenuItem importTile;
 	private JMenuItem importTextGlyph;
+	private JMenuItem exit;
 	private CreateNewMap mapDialog;
 
 	
@@ -96,6 +97,9 @@ public class MapStudioMain
 		export.addActionListener(new exportCFile());
 		export.setEnabled(false);
 		
+		exit = new JMenuItem("Exit");
+		exit.addActionListener(new ExitTabbedPaned());
+		
 		importTextGlyph = new JMenuItem("Import text glyph");
 		importTextGlyph.addActionListener(new importTextGlyph());
 
@@ -105,6 +109,7 @@ public class MapStudioMain
 		file.add(save);
 		file.add(saveAs);
 		file.add(export);
+		file.add(exit);
 		file.add(importTextGlyph);
 		
 		mainMenu.add(file);
@@ -353,6 +358,13 @@ public class MapStudioMain
 				}
 			}
 		);
+	}
+	
+	class ExitTabbedPaned implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			FilePane.remove(FilePane.getSelectedIndex());
+		}
 	}
 	
 	private class TileFileFilter extends FileFilter

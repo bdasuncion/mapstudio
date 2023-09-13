@@ -443,7 +443,8 @@ public class ExportToC {
 	
 	private static void writeHeightMap(File f, FileWriter cFile, Vector<CollisionInfo> collisionSet) {
 		try {
-			cFile.write("const u8 heightMap_" + getFileName(f).toLowerCase() + "[] = {\n\t");
+			//cFile.write("const u8 heightMap_" + getFileName(f).toLowerCase() + "[] = {\n\t");
+			cFile.write("const HeightCollision heightMap_" + getFileName(f).toLowerCase() + "[] = {\n\t");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -453,7 +454,8 @@ public class ExportToC {
 		int idx16 = 0;
 		for (CollisionInfo collisionInfo : collisionSet) {
 			try {
-				cFile.write((collisionInfo.getHeight()/conversionFactor) + ",");
+				//cFile.write((collisionInfo.getHeight()/conversionFactor) + ",");
+				cFile.write("{0, " + (collisionInfo.getHeight()/conversionFactor) + "},");
 				++idx16;
 				if (idx16 >= 16) {
 					idx16 = 0;

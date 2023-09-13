@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import infoObjects.TileSetInfo;
+import interfaces.MapTileSettingModeSelection;
 import interfaces.TileSetManipulation;
 import interfaces.TileSetPanelDisplay;
 import interfaces.TileSetting;
@@ -26,6 +27,7 @@ public class TileSetControlPanel extends JPanel implements ActionListener {
 	private boolean tileSetResized = false;
 	private TileSetManipulation tileSetManipulation;
 	private TileSetPanelDisplay tileSetPanelDisplay;
+	private MapTileSettingModeSelection mapTileSettingModeSelection;
 	
 	JButton showLayerPanel;
 	
@@ -34,12 +36,14 @@ public class TileSetControlPanel extends JPanel implements ActionListener {
 	public final static String COLLISION_COMMAND = "COLLISION";
 	public final static String SETTILE_COMMAND = "SETTILE";
 		
-	public TileSetControlPanel(JFrame parent, TileSetManipulation tsm, TileSetPanelDisplay tspd) {
+	public TileSetControlPanel(JFrame parent, TileSetManipulation tsm, 
+			TileSetPanelDisplay tspd, MapTileSettingModeSelection mtsmd) {
 		super();
 		this.setLayout(new GridLayout(0,1));
 		
 		tileSetManipulation = tsm;
 		tileSetPanelDisplay = tspd;
+		mapTileSettingModeSelection = mtsmd;
 		//tileSet = new MapTileSetPanel(tileW, tileH, ts);
 		
 		//tileSizeDialog = new TileSetResizeDialog(parent);
@@ -91,13 +95,19 @@ public class TileSetControlPanel extends JPanel implements ActionListener {
 			this.flipTileSetHorizontal();
 		} else if (action.contains(COLLISION_COMMAND)) {
 			tileSetPanelDisplay.showCollisionSet();
+			mapTileSettingModeSelection.setAsMapHeightMode(true);
+			mapTileSettingModeSelection.setAsTileMode(false);
 			showLayerPanel.setText(LAYER_COMMAND);
 		} else if (action.contains(LAYER_COMMAND)) {
 			showLayerPanel.setText(LAYERCHANGEALL_COMMAND);
 			tileSetPanelDisplay.showLayerSet();
+			mapTileSettingModeSelection.setAsMapHeightMode(false);
+			mapTileSettingModeSelection.setAsTileMode(true);
 		} else if (action.contains(SETTILE_COMMAND)) {
 			tileSetPanelDisplay.showTileSet();
 			showLayerPanel.setText(LAYER_COMMAND);
+			mapTileSettingModeSelection.setAsMapHeightMode(false);
+			mapTileSettingModeSelection.setAsTileMode(true);
 		} else {
 			this.resizeTileSet();
 		}
