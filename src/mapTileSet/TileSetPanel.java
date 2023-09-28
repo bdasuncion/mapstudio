@@ -52,6 +52,8 @@ public class TileSetPanel extends JPanel implements TileSetting {
 	
 	TileSetting tileSetting;
 	
+	protected boolean drawTiles = true;
+	
 	public TileSetPanel(int tileW, int tileH, TileSetting ts) {
 		tileSetName = "CUSTOM TILES";
 		//this.enableEvents(AWTEvent.MOUSE_WHEEL_EVENT_MASK | 
@@ -130,7 +132,7 @@ public class TileSetPanel extends JPanel implements TileSetting {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
-		if (tileSetInfo == null) {
+		if (tileSetInfo == null || !drawTiles) {
 			return;
 		}
 		Graphics2D g2D =(Graphics2D)g;

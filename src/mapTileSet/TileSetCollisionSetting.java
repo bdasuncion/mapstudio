@@ -21,8 +21,8 @@ public class TileSetCollisionSetting extends TileSetPanel {
 	CollisionSettingDialog collisionSet;
 	public TileSetCollisionSetting(int tileW, int tileH, TileSetting ts) {
 		super(tileW, tileH, ts);
-		// TODO Auto-generated constructor stub
 		collisionSet = new CollisionSettingDialog(null);
+		drawTiles = false;
 	}
 	
 	protected void setMouseActions() {
@@ -47,32 +47,17 @@ public class TileSetCollisionSetting extends TileSetPanel {
 		int width = tileSetInfo.getWidthInTiles()/2, height = tileSetInfo.getHeightInTiles()/2;
 		int tileWidth = 16, tileHeight = 16;
 		
-		for (int i = 0; i <= width; ++i) {
-			g2D.drawLine(tileWidth*scale*i, 0, tileWidth*scale*i, height*scale*tileHeight);
-		}
+		g2D.setColor(new Color(255, 255, 255, 190));
+		g2D.fill(new Rectangle(0, 0,
+				tileWidth*scale, tileHeight*scale));
 		
-		for (int i = 0; i <= height; ++i) {
-			g2D.drawLine(0, tileHeight*scale*i, width*scale*tileWidth, tileHeight*scale*i);
-		}
-		
-		g2D.setFont(new Font(g.getFont().getFontName(), Font.PLAIN, tileHeight*scale));
-		
-		int x = 0, y = 0;
-		for (int i = 0; i < getTileSetInfo().getHeightInTiles()/2; ++i) {
-			for (int j = 0; j < getTileSetInfo().getWidthInTiles()/2; ++j) {
-				x = getSnapToWidth()*j;
-				CollisionInfo collisionInfo = getTileSetInfo().getCollision().
-						get(j + i*(getTileSetInfo().getWidthInTiles()/2));
-				//g2D.draw(new Rectangle((x + collisionInfo.getX())*scale, (y + collisionInfo.getY())*scale,
-				//		collisionInfo.getWidth()*scale, collisionInfo.getHeight()*scale));
-				
-				g2D.setColor(new Color(255, 255, 255, 190));
-				g2D.fill(new Rectangle((x + collisionInfo.getX())*scale, (y + collisionInfo.getY())*scale,
-						collisionInfo.getWidth()*scale, collisionInfo.getLength()*scale));
-			}
-			x = 0;
-			y += getSnapToHeight();
-		}
+		g2D.setColor(new Color(0, 0, 255, 120));
+		g2D.drawString("HEIGHT:" + tileSetInfo.getCollision().get(0).getHeight(), tileWidth*tileSetInfo.getWidthInTiles()*scale + 16,
+				40);
+		g2D.drawString("WIDTH:" + tileSetInfo.getCollision().get(0).getWidth(), tileWidth*tileSetInfo.getWidthInTiles()*scale + 16,
+				55);
+		g2D.drawString("LENGTH:" + tileSetInfo.getCollision().get(0).getLength(), tileWidth*tileSetInfo.getWidthInTiles()*scale + 16,
+				70);
 	}
 	
 	private class TileSetLayerCollisionSettingListener extends MouseInputAdapter  {
@@ -82,7 +67,8 @@ public class TileSetCollisionSetting extends TileSetPanel {
 			int x = getxHighlight()/(scale*getSnapToWidth());
 			int y = getyHighlight()/(scale*getSnapToHeight());
 			TileSetInfo tileSetInfo = getTileSetInfo();
-			collisionSet.setCollisionInfo(tileSetInfo.getCollision().get(x + (y*(tileSetInfo.getWidthInTiles()/2))));
+			//collisionSet.setCollisionInfo(tileSetInfo.getCollision().get(x + (y*(tileSetInfo.getWidthInTiles()/2))));
+			collisionSet.setCollisionInfo(tileSetInfo.getCollision().get(0));
 			collisionSet.setVisible(true);
 			repaint();
 		}

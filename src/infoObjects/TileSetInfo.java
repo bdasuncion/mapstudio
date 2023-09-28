@@ -18,7 +18,7 @@ public class TileSetInfo {
     
     public TileSetInfo(int width, int height, BufferedImage[] tiles, int idx, String name) {
     	widthInTiles = width;
-    	heightInTiles = height;
+    	heightInTiles = height; 
     	tileSet = new Vector<TileInfo>();
     	collision = new Vector<CollisionInfo>();
     	fileName = name;
@@ -80,12 +80,13 @@ public class TileSetInfo {
     	//tileIdxEnd = tileSet.lastElement().getIndex() + 1;
     	
     	initializeCollision(tiles.size());
+    	//initializeCollision(4);
     }
     
     private void initializeCollision(int tileCount) {
-    	for (int i = 0; i < tileCount/4; ++i) {
+    	//for (int i = 0; i < tileCount/4; ++i) {
     		collision.add(new CollisionInfo());
-    	}
+    	//}
     }
     
 	public int getWidthInTiles() {
@@ -176,7 +177,7 @@ public class TileSetInfo {
 			tile.setVflip(!tile.isVflip());
 		}
 		
-		for (int i = 0; i < heightInTiles/4; ++i) {
+		/*for (int i = 0; i < heightInTiles/4; ++i) {
 			for (int j = 0; j < widthInTiles/2; ++j) {
 				CollisionInfo collisionTemp = collision.get(j + i*(widthInTiles/2));
 				CollisionInfo collisionTemp2 = collision.get(j + (heightInTiles/2 - 1 - i)*(widthInTiles/2));
@@ -186,7 +187,7 @@ public class TileSetInfo {
 		}
 		for (CollisionInfo collisionInfo: getCollision()) {
 			collisionInfo.setVflip(!collisionInfo.isVflip());
-		}
+		}*/
 	}
 	
 	public void flipHorizontal() {
@@ -203,17 +204,17 @@ public class TileSetInfo {
 			tile.setHflip(!tile.isHflip());
 		}
 		
-		for (int i = 0; i < heightInTiles/2; ++i) {
+		/*for (int i = 0; i < heightInTiles/2; ++i) {
 			for (int j = 0; j < widthInTiles/4; ++j) {
 				CollisionInfo collisionTemp = collision.get(j + i*(widthInTiles/2));
 				CollisionInfo collisionTemp2 = collision.get((widthInTiles/2 - 1 - j) + i*(widthInTiles/2));
 				collision.set((widthInTiles/2 - 1 - j) + i*(widthInTiles/2), collisionTemp);
 				collision.set(j + i*(widthInTiles/2), collisionTemp2);
 			}
-		}
-		for (CollisionInfo collisionInfo: getCollision()) {
-			collisionInfo.setHflip(!collisionInfo.isHflip());
-		}
+		}*/
+		//for (CollisionInfo collisionInfo: getCollision()) {
+		//	collisionInfo.setHflip(!collisionInfo.isHflip());
+		//}
 	}
 
 	public int getPaletteIdx() {
