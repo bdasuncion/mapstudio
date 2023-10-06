@@ -142,24 +142,15 @@ public class TileSetInfo {
 		int totalWidth = width*2, totalHeight = height*2;
 		
 		int startIdx = (x*2) + (y*widthInTiles*2);
-		
-		//System.out.println("STARTIDX: " + startIdx + " W " + totalWidth + " H " + totalHeight);
-		//BufferedImage[] tiles = new BufferedImage[totalWidth*totalHeight];
-		
+				
 		for (int i = 0; i < totalHeight; ++i) {
 			for (int j = 0; j < totalWidth; ++j) {
-				//System.out.println("IDX: " + ((startIdx + j) + (i*widthInTiles)));
 				selectedTiles.add(getTileSet().get((startIdx + j) + (i*widthInTiles)));
 			}
 		}
 		
 		Vector<CollisionInfo> selectedCollision = new Vector<CollisionInfo>();
-		for (int i = 0; i < height; ++i) {
-			for (int j = 0; j < width; ++j) {
-				//System.out.println("IDX: " + ((startIdx + j) + (i*widthInTiles)));
-				selectedCollision.add(getCollision().get((x + j) + (i*width)));
-			}
-		}
+		selectedCollision.add(getCollision().get(0));
 		
 		return  new TileSetInfo(totalWidth, totalHeight, selectedTiles, selectedCollision);
 	}
@@ -176,18 +167,6 @@ public class TileSetInfo {
 		for (TileInfo tile: getTileSet()) {
 			tile.setVflip(!tile.isVflip());
 		}
-		
-		/*for (int i = 0; i < heightInTiles/4; ++i) {
-			for (int j = 0; j < widthInTiles/2; ++j) {
-				CollisionInfo collisionTemp = collision.get(j + i*(widthInTiles/2));
-				CollisionInfo collisionTemp2 = collision.get(j + (heightInTiles/2 - 1 - i)*(widthInTiles/2));
-				collision.set(j + (heightInTiles/2 - 1 - i)*(widthInTiles/2), collisionTemp);
-				collision.set(j + i*(widthInTiles/2), collisionTemp2);
-			}
-		}
-		for (CollisionInfo collisionInfo: getCollision()) {
-			collisionInfo.setVflip(!collisionInfo.isVflip());
-		}*/
 	}
 	
 	public void flipHorizontal() {
@@ -203,18 +182,6 @@ public class TileSetInfo {
 		for (TileInfo tile: getTileSet()) {
 			tile.setHflip(!tile.isHflip());
 		}
-		
-		/*for (int i = 0; i < heightInTiles/2; ++i) {
-			for (int j = 0; j < widthInTiles/4; ++j) {
-				CollisionInfo collisionTemp = collision.get(j + i*(widthInTiles/2));
-				CollisionInfo collisionTemp2 = collision.get((widthInTiles/2 - 1 - j) + i*(widthInTiles/2));
-				collision.set((widthInTiles/2 - 1 - j) + i*(widthInTiles/2), collisionTemp);
-				collision.set(j + i*(widthInTiles/2), collisionTemp2);
-			}
-		}*/
-		//for (CollisionInfo collisionInfo: getCollision()) {
-		//	collisionInfo.setHflip(!collisionInfo.isHflip());
-		//}
 	}
 
 	public int getPaletteIdx() {
@@ -232,7 +199,6 @@ public class TileSetInfo {
 		File tileFile = new File(parentDirectory + "\\" + getFileName() + ".tile");
 		TileReader read = new TileReader();
 		read.read(tileFile);
-		//getTileSet().clear();
 		
 		Vector<TileInfo> tiles = getTileSet();
 		
