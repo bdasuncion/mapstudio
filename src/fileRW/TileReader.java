@@ -90,10 +90,10 @@ public class TileReader
 	}
 	
 	private void readHeader() {
-		pixelSize = (int)(data[0]|data[1]>>8|data[2]>>16|data[3]>>24);
-		widthInTiles = (int)(data[4]|data[5]>>8|data[6]>>16|data[7]>>24);
-		heightInTiles = (int)(data[8]|data[9]>>8|data[10]>>16|data[11]>>24);
-		numberOfTiles = (int)(data[12]|data[13]>>8|data[14]>>16|data[15]>>24);
+		pixelSize = (int)(data[0]|(data[1]<<8)|(data[2]<<16)|(data[3]<<24));
+		widthInTiles = (int)(data[4]|(data[5]<<8)|(data[6]<<16)|(data[7]<<24));
+		heightInTiles = (int)(data[8]|(data[9]<<8)|(data[10]<<16)|(data[11]<<24));
+		numberOfTiles = (int)(data[12]|(data[13]<<8)|(data[14]<<16)|(data[15]<<24));
 	}
 	
 	private void readPalette() {
@@ -118,7 +118,6 @@ public class TileReader
 		int tileWidth = 8;
 		int tileHeight = 8;
 		int sizeInBytes = tileWidth*tileHeight*pixelSize/8;
-		
 		for(int idx = 0;idx<numberOfTiles;idx++)
 		{
 			byte[] imageData = new byte[sizeInBytes];
