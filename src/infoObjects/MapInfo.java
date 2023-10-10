@@ -78,11 +78,7 @@ public class MapInfo {
     	}
     	
     	if (isSetCollision) {
-	    	for (int i = 0; i < height/2; ++i) {
-	    		for (int j = 0; j < width/2; ++j) {
-	    			setCollisionAt(x/2 + j, y/2 + i, tsi.getCollision().get(j + i*width/2));
-	    		}
-	    	}
+    		setCollisionAt(x/2, y/2, tsi.getCollision().get(0));
     	}
     }
 
