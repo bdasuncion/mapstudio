@@ -205,12 +205,18 @@ public class TileSetInfo {
 		tiles.clear();
 		int tileIdxSet = tileIdxStart;
 		if (read != null) {
+			int row = 0, column = 0;
 			for (int i = 0; i < read.getTile().length; ++i) {
 				if (tiles.size() >= i) {
 				    tiles.add(new TileInfo(8, 8));
 				}
 				tiles.get(i).setTile(read.getTile()[i]);
-				tiles.get(i).setName(formatName(getFileName(), i));
+				tiles.get(i).setName(formatName(getFileName(), row, column));
+				System.out.println("IMPORT:" + formatName(getFileName(), row, column));
+				if (column >= read.getWidthInTiles()) {
+					column = 0;
+					++row;
+				}
 				if (!tiles.get(i).isEmptyImage()) {
 					tiles.get(i).setIndex(tileIdxSet);
 					++tileIdxSet;
@@ -225,7 +231,7 @@ public class TileSetInfo {
 		return tileIdxSet;
 	}
 	
-	public static String formatName(String baseName, int currentCount) {
-		return baseName + "_" + currentCount;
+	public static String formatName(String baseName, int row, int column) {
+		return baseName + "_" + row + "_" + column;
 	}
 }

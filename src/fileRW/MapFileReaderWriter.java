@@ -513,7 +513,6 @@ public class MapFileReaderWriter {
 
 			if (tileSetAttributeNode.getNodeType() == Node.ELEMENT_NODE) {
 				Element eElement = (Element) tileSetAttributeNode;
-				// System.out.println("SOMETHING "+ eElement.getTagName());
 				if (eElement.getTagName() == TILESET) {
 					tileIdx = readTileSet(eElement.getChildNodes(), parentDirectory, tileIdx, tileSetInfos);
 				}
@@ -550,12 +549,20 @@ public class MapFileReaderWriter {
 		}
 		if (read != null) {
 			int tileIdxSet = tileIdx;
+			int row = 0, column = 0;
 			for (int i = 0; i < read.getTile().length; ++i) {
 				if (tiles.size() >= i) {
 				    tiles.add(new TileInfo(8, 8));
 				}
+				
 				tiles.get(i).setTile(read.getTile()[i]);
-				tiles.get(i).setName(TileSetInfo.formatName(name, i));
+				tiles.get(i).setName(TileSetInfo.formatName(name, row, column));
+				System.out.println("READ:" + TileSetInfo.formatName(name, row, column));
+				++column;
+				if (column >= read.getWidthInTiles()) {
+					column = 0;
+					++row;
+				}
 				if (!tiles.get(i).isEmptyImage()) {
 					tiles.get(i).setIndex(tileIdxSet);
 					++tileIdxSet;
