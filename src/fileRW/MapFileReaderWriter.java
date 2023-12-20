@@ -105,6 +105,7 @@ public class MapFileReaderWriter {
 	private static final String SPRITEMASK_NAME = "spritemask_name";
 	
 	private static final String VERSION = "version";
+	private static final String CURRENTVERSION = "2";
 	
 
 	public MapFileReaderWriter() {
@@ -123,10 +124,14 @@ public class MapFileReaderWriter {
 		}
 
 		Document doc = builder.newDocument();
-
+		
 		Element rootElement = doc.createElement(ROOT);
 		doc.appendChild(rootElement);
 
+		Element version = doc.createElement(VERSION);
+		version.appendChild(doc.createTextNode(CURRENTVERSION));
+		rootElement.appendChild(version);
+		
 		rootElement.appendChild(createTileSets(doc, mapInfo));
 		Element width = doc.createElement(MAPWIDTH);
 		width.appendChild(doc.createTextNode(mapInfo.getWidthInTiles() + ""));
@@ -415,12 +420,16 @@ public class MapFileReaderWriter {
 		}
 
 		NodeList saveVersion = doc.getElementsByTagName(VERSION);
-		System.out.println("VERSION: " + saveVersion.getLength());
-		if (saveVersion.getLength() == 0) {
-			version = 1;
+		for (int idx = 0; idx < saveVersion.getLength(); idx++) {
+			Node versionNode = saveVersion.item(idx);
+			if (versionNode.getNodeType() == Node.ELEMENT_NODE) {
+				Element eElement = (Element) versionNode;
+				if (eElement.getTagName().matches(VERSION)) {
+					version = Integer.parseInt(eElement.getTextContent());
+				}
+			}
 		}
-		//for (int idx = 0; idx < saveVersion.getLength(); idx++) {
-		//}
+		System.out.println("VERSION: " + version);
 
 		NodeList width = doc.getElementsByTagName(MAPWIDTH);
 		for (int idx = 0; idx < width.getLength(); idx++) {
