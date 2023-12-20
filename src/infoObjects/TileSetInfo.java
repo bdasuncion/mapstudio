@@ -212,7 +212,6 @@ public class TileSetInfo {
 				}
 				tiles.get(i).setTile(read.getTile()[i]);
 				tiles.get(i).setName(formatName(getFileName(), row, column));
-				System.out.println("IMPORT:" + formatName(getFileName(), row, column));
 				if (column >= read.getWidthInTiles()) {
 					column = 0;
 					++row;

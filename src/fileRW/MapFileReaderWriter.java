@@ -104,6 +104,8 @@ public class MapFileReaderWriter {
 	private static final String SPRITEMASK_Z = "spritemask_z";
 	private static final String SPRITEMASK_NAME = "spritemask_name";
 	
+	private static final String VERSION = "version";
+	
 
 	public MapFileReaderWriter() {
 
@@ -402,6 +404,7 @@ public class MapFileReaderWriter {
 		int mapWidth = 0, mapHeight = 0;
 		DocumentBuilder dBuilder;
 		Document doc;
+		int version = 1;
 		try {
 			dBuilder = dbFactory.newDocumentBuilder();
 			doc = dBuilder.parse(f);
@@ -411,7 +414,13 @@ public class MapFileReaderWriter {
 			return;
 		}
 
-		doc.getDocumentElement().normalize();
+		NodeList saveVersion = doc.getElementsByTagName(VERSION);
+		System.out.println("VERSION: " + saveVersion.getLength());
+		if (saveVersion.getLength() == 0) {
+			version = 1;
+		}
+		//for (int idx = 0; idx < saveVersion.getLength(); idx++) {
+		//}
 
 		NodeList width = doc.getElementsByTagName(MAPWIDTH);
 		for (int idx = 0; idx < width.getLength(); idx++) {
@@ -503,7 +512,30 @@ public class MapFileReaderWriter {
 				}
 			}
 		}
+		
+		if (version == 1) {
+			convertFromVersion1(tileSetInfo, layers);
+		}
 
+	}
+	
+	private void convertFromVersion1(Vector<TileSetInfo> tileSetInfo, Vector<Vector<TileInfo>> layers) {
+		for (TileSetInfo tileSet: tileSetInfo) {
+			int width = tileSet.getWidthInTiles(), height = tileSet.getHeightInTiles();
+			for (Vector<TileInfo> layer: layers) {
+				for (TileInfo tile: layer) {
+					String tileName = tile.getName();
+					if (tileName.contains(tileSet.getFileName())) {
+						int index = tileName.lastIndexOf('_');
+						String number = tileName.substring(index + 1);
+						int tileCount = Integer.parseInt(number);
+						int row = tileCount/width;
+						int column = tileCount%width;
+						tile.setName(tileSet.getFileName() + "_" + row + "_" + column);
+					}
+				}
+			}
+		}
 	}
 
 	public void readTileSets(NodeList tileSet, String parentDirectory, Vector<TileSetInfo> tileSetInfos) {
@@ -526,7 +558,6 @@ public class MapFileReaderWriter {
 		String name = "";
 		Vector<TileInfo> tiles = new Vector<TileInfo>();
 		Vector<CollisionInfo> collisionMap = new Vector<CollisionInfo>();
-
 		for (int idx = 0; idx < tileSet.getLength(); idx++) {
 			Node tileSetAttributeNode = tileSet.item(idx);
 			if (tileSetAttributeNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -557,7 +588,7 @@ public class MapFileReaderWriter {
 				
 				tiles.get(i).setTile(read.getTile()[i]);
 				tiles.get(i).setName(TileSetInfo.formatName(name, row, column));
-				System.out.println("READ:" + TileSetInfo.formatName(name, row, column));
+				//System.out.println("READ:" + TileSetInfo.formatName(name, row, column));
 				++column;
 				if (column >= read.getWidthInTiles()) {
 					column = 0;
