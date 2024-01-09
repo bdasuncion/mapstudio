@@ -90,6 +90,11 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 	private boolean tileMode = true;
 	private boolean heightMapMode = false;
 	
+	private int displayCoordinatesX = 0;
+	private int displayCoordinatesY = 0;
+	private boolean displayCoordinates = false;
+	
+	
 	public MapCanvasWxH(MapInfo mi, int widthInPixels, int heightInPixels, 
 	int widthOfTile, int heightOfTile) {
 		//this.enableEvents(AWTEvent.MOUSE_WHEEL_EVENT_MASK|AWTEvent.MOUSE_MOTION_EVENT_MASK);
@@ -198,13 +203,31 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 		
 		drawMapStamp(g2D, display);
 		drawHeightMapStamp(g2D, display);
-		
+		drawCoordinates(g2D);
 		xTileSetPositionPrev = xTileHighlightPosition;
 		yTileSetPositionPrev = yTileHighlightPosition;
 		
 		g2D.dispose();
 	}
 	
+	private void drawCoordinates(Graphics2D g2d) {
+		if (displayCoordinates) {
+			int coordBoxWidth = 70;
+			int coordBoxHeigth = 20;
+			int yOffset = 15;
+			g2d.setColor(Color.black);
+			int displayAtX = displayCoordinatesX;
+			if (displayAtX + coordBoxWidth >= mapWidth) {
+				displayAtX -= coordBoxWidth;
+			}
+			g2d.fillRect(displayAtX, displayCoordinatesY - yOffset, coordBoxWidth, coordBoxHeigth);
+			g2d.setColor(Color.white);
+			g2d.drawString("(" + displayCoordinatesX + ", " + displayCoordinatesY + ")", 
+					displayAtX, displayCoordinatesY);
+		}
+		
+	}
+
 	private void drawSpriteMasks(Graphics2D g2D, BufferedImage display) {
 		for (SpriteMaskInfo spriteMask: mapInfo.getSpriteMasks()) {
 			SpriteMaskBoundsInfo bounds = spriteMask.getBounds();
@@ -353,11 +376,22 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 	}
 	
 	private void drawEventMapTransfer(Graphics2D g2D, BufferedImage display, EventTransferMapInfo info) {
+		int displayX = info.getX();
+		int offsetY = 6;
+		String transferToMapName = info.getTransferToMap() + ":";
+		int boxWidth = (int) ((transferToMapName.length()*3.5) + 5);
+		if ((displayX + boxWidth) > mapWidth) {
+			displayX -= (displayX + boxWidth) - mapWidth;
+		}
+		//g2D.setColor(Color.BLACK);
+		//g2D.fillRect(displayX, info.getY(), boxWidth, offsetY*3);
+		
 		g2D.setColor(Color.CYAN);
 		g2D.setStroke(new BasicStroke(0.2f));
 		g2D.setFont(new Font(g2D.getFont().getFontName(), Font.PLAIN, 6));
-		g2D.drawString(info.getTransferToMap() + ":(" + info.getTransferToX()+ ", " + info.getTransferToY() + ")", 
-			info.getX(), info.getY() + 12);
+		g2D.drawString(transferToMapName, displayX, info.getY() + offsetY*2);
+		g2D.drawString("(" + info.getTransferToX()+ ", " + info.getTransferToY() + ")", 
+				displayX, info.getY() + offsetY*3);
 	}
 	
 	public void processMouseWheelEvent(MouseWheelEvent e) {
@@ -487,12 +521,18 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 		repaint();
 	}
 	
+	private void setDisplayCoordinates(int mouseX, int mouseY) {
+		displayCoordinatesX = (int)(mouseX/scale);
+		displayCoordinatesY = (int)(mouseY/scale);
+		displayCoordinates = true;
+	}
+	
 	protected class TileSetting extends MouseInputAdapter {
 		//@Override
 		int xTileSetPostion;
 		int yTileSetPostion;
 		public void mousePressed(MouseEvent e) {
-			//if(e.getID() == MouseEvent.MOUSE_PRESSED && e.getButton() == MouseEvent.BUTTON1) {
+			if(e.getID() == MouseEvent.MOUSE_PRESSED && e.getButton() == MouseEvent.BUTTON1) {
 				int snapToWidth = 16;
 				int snapToHeight = 16;
 				
@@ -504,8 +544,10 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 				xTileHighlightPosition = normalizeX(e.getX())*(snapToWidth);
 				yTileHighlightPosition = normalizeY(e.getY())*(snapToHeight);
 				
-				repaint();
-			//}
+			} else if (e.getID() == MouseEvent.MOUSE_PRESSED && e.getButton() == MouseEvent.BUTTON3){
+				setDisplayCoordinates(e.getX(), e.getY());
+			}
+			repaint();
 		}
 		
 		@Override
@@ -513,18 +555,25 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 			int dragX = normalizeX(e.getX());
 			int dragY = normalizeY(e.getY());
 			
-			int differenceX = (xTileSetPostion- dragX);
-			int differenceY = (yTileSetPostion - dragY);
-			int widthCheck = differenceX < 0 ? -differenceX : differenceX;
-			int heightCheck = differenceY < 0 ? -differenceY: differenceY;
-			int tileWidth = !heightMapMode ? (setTiles.getWidthInTiles()/2) : 1;
-			int tileHeight = !heightMapMode ? (setTiles.getHeightInTiles()/2) : 1;
-
-			if (widthCheck >= tileWidth || heightCheck >= tileHeight) {
-				xTileSetPostion = dragX;
-				yTileSetPostion = dragY;
-				mapInfo.setTileSetToMap(xTileSetPostion*2, yTileSetPostion*2, setTiles, tileMode, heightMapMode);
+			if (setTiles == null) {
+				return;
 			}
+			//if (e.getButton() == MouseEvent.BUTTON1 ) {
+				int differenceX = (xTileSetPostion- dragX);
+				int differenceY = (yTileSetPostion - dragY);
+				int widthCheck = differenceX < 0 ? -differenceX : differenceX;
+				int heightCheck = differenceY < 0 ? -differenceY: differenceY;
+				int tileWidth = !heightMapMode ? (setTiles.getWidthInTiles()/2) : 1;
+				int tileHeight = !heightMapMode ? (setTiles.getHeightInTiles()/2) : 1;
+
+				if (e.getButton() == MouseEvent.BUTTON1 && (widthCheck >= tileWidth || heightCheck >= tileHeight)) {
+					xTileSetPostion = dragX;
+					yTileSetPostion = dragY;
+					mapInfo.setTileSetToMap(xTileSetPostion*2, yTileSetPostion*2, setTiles, tileMode, heightMapMode);
+				}
+			//} //else if (e.getButton() == MouseEvent.BUTTON3) {
+			//	System.out.println(e.getX()/scale + " " + e.getY()/scale);
+			//}
 			
 			repaint();
         }
@@ -547,6 +596,7 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 				xTileHighlightPosition = (int)(e.getX()/(snapToWidth*scale));//*(setW);
 				yTileHighlightPosition = (int)(e.getY()/(snapToHeight*scale));//*(setH);
 				//System.out.println("MOUSE RELEASED:" + xTileHighlightPosition + " " + yTileHighlightPosition);
+				displayCoordinates = false;
 			//}
         }
 		
@@ -579,6 +629,8 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 						(yTileHighlightPosition*snapToHeight), mapInfo.getEvents());
 				eventSettingDialog.setVisible(true);
 				repaint();
+			} else if (e.getID() == MouseEvent.MOUSE_PRESSED && e.getButton() == MouseEvent.BUTTON3){
+				setDisplayCoordinates(e.getX(), e.getY());
 			}
 		}
 	}
@@ -598,6 +650,8 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 
 				actorSettingDialog.setVisible(true);
 				repaint();
+			} else if (e.getID() == MouseEvent.MOUSE_PRESSED && e.getButton() == MouseEvent.BUTTON3){
+				setDisplayCoordinates(e.getX(), e.getY());
 			}
 		}
 	}
@@ -617,6 +671,8 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 						mapInfo.getSpriteMasks());
 				spriteMaskSettingDialog.setVisible(true);
 				repaint();
+			} else if (e.getID() == MouseEvent.MOUSE_PRESSED && e.getButton() == MouseEvent.BUTTON3){
+				setDisplayCoordinates(e.getX(), e.getY());
 			}
 		}
 	}
