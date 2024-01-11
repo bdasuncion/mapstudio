@@ -33,7 +33,7 @@ public class EventSettingDialog extends JDialog implements ActionListener, KeyLi
 	private TransferPanel transferPanel;
 	
 	
-	int x, y, zOffset, width, length;
+	int x, y, z, zOffset, width, length;
 	String name;
 	Vector<EventInfo> evenInfos;
 	
@@ -83,6 +83,7 @@ public class EventSettingDialog extends JDialog implements ActionListener, KeyLi
     	transferPanel.setTransferToMap("");
     	transferPanel.setTransferToX(EventTransferMapInfo.XYMIN_VALUE);
     	transferPanel.setTransferToY(EventTransferMapInfo.XYMIN_VALUE);
+    	transferPanel.setTransferToZ(0);
     	transferPanel.setFaceDirectionOnTransfer(EventTransferMapInfo.DOWN);
     }
     
@@ -275,10 +276,12 @@ public class EventSettingDialog extends JDialog implements ActionListener, KeyLi
 	private class TransferPanel extends JPanel {
 		private JSpinner transferToX;
 		private JSpinner transferToY;
+		private JSpinner transferToZ;
 		JTextField transferToMap;
 		JComboBox faceDirectionOnTransfer;
 		SpinnerNumberModel xTransferModel;
 		SpinnerNumberModel yTransferModel;
+		SpinnerNumberModel zTransferModel;
 		
 		public TransferPanel() {
 			super();
@@ -287,11 +290,14 @@ public class EventSettingDialog extends JDialog implements ActionListener, KeyLi
 					EventTransferMapInfo.XYMIN_VALUE, EventTransferMapInfo.XYMAX_VALUE, 1);
 			yTransferModel = new SpinnerNumberModel(EventTransferMapInfo.XYMIN_VALUE,
 					EventTransferMapInfo.XYMIN_VALUE, EventTransferMapInfo.XYMAX_VALUE, 1);
+			zTransferModel = new SpinnerNumberModel(0, 0, EventTransferMapInfo.XYMAX_VALUE, 1);
 			
 			transferToX = new JSpinner(xTransferModel);
 			transferToX.setSize(15,10);
 			transferToY = new JSpinner(yTransferModel);
 			transferToY.setSize(15,10);
+			transferToZ = new JSpinner(zTransferModel);
+			transferToZ.setSize(15,10);
 			
 			JPanel panelXTransfer = new JPanel();
 			panelXTransfer.add(new JLabel("Go to X:"));
@@ -301,9 +307,14 @@ public class EventSettingDialog extends JDialog implements ActionListener, KeyLi
 	    	panelYTransfer.add(new JLabel("Go to Y:"));
 	    	panelYTransfer.add(transferToY);
 	    	
+	    	JPanel panelZTransfer = new JPanel();
+	    	panelZTransfer.add(new JLabel("Go to Z:"));
+	    	panelZTransfer.add(transferToZ);
+	    	
 	    	JPanel transferXYPanel = new JPanel();
 	    	transferXYPanel.add(panelXTransfer);
 	    	transferXYPanel.add(panelYTransfer);
+	    	transferXYPanel.add(panelZTransfer);
 	    	
 	    	transferToMap = new JTextField();
 	    	transferToMap.setPreferredSize(new Dimension(80, 20));
@@ -346,6 +357,7 @@ public class EventSettingDialog extends JDialog implements ActionListener, KeyLi
 			    info.setTransferToMap(transferToMap.getText());
 			    info.setTransferToX((int) transferToX.getValue());
 			    info.setTransferToY((int) transferToY.getValue());
+			    info.setTransferToZ((int) transferToZ.getValue());
 			    info.setFaceDirectionOnTransfer((String) faceDirectionOnTransfer.getSelectedItem());
 			}
 		}
@@ -363,6 +375,11 @@ public class EventSettingDialog extends JDialog implements ActionListener, KeyLi
 			
 		}
 		
+		public void setTransferToZ(int z) {
+			transferToZ.setValue(z);
+			
+		}
+		
 		public void setFaceDirectionOnTransfer( String direction) {
 			faceDirectionOnTransfer.setSelectedItem(direction);
 		}
@@ -371,6 +388,7 @@ public class EventSettingDialog extends JDialog implements ActionListener, KeyLi
 			transferToMap.setText(info.getTransferToMap());
 			transferToX.setValue(info.getTransferToX());
 			transferToY.setValue(info.getTransferToY());
+			transferToZ.setValue(info.getTransferToZ());
 			faceDirectionOnTransfer.setSelectedItem(info.getFaceDirectionOnTransfer());
 		}
 	}

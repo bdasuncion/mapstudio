@@ -426,7 +426,8 @@ public class ExportToC {
 		for (EventTransferMapInfo eventInfo : events) {
 			try {
 				cFile.write("\t{ " + eventInfo.getX() + ", " + eventInfo.getY() + ", " + eventInfo.getTransferToX() + ", "
-						+ eventInfo.getTransferToY() + ", " + "&" + eventInfo.getTransferToMap() + ", "
+						+ eventInfo.getTransferToY() + ", " + eventInfo.getTransferToZ() + ", " 
+						+ "&" + eventInfo.getTransferToMap() + ", "
 						+ eventInfo.getWidth() + ", " + eventInfo.getLength() + ", " + eventInfo.getzOffset() + ", "
 						+ eventInfo.getFaceDirectionOnTransfer() + "},\n");
 			} catch (IOException e) {

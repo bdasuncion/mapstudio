@@ -98,7 +98,7 @@ public class VisibleLayer extends JPanel implements ItemListener, ActionListener
 		layer3.setSelected(true);
 		
 		grid = new JCheckBox("Grid");
-		grid.setSelected(true);
+		grid.setSelected(false);
 		
 		actorsLayer = new JCheckBox("Characters");
 		actorsLayer.setSelected(false);
