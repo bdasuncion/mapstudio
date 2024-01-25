@@ -3,6 +3,7 @@ package infoObjects;
 public class EventTransferMapInfo extends EventInfo {
     private int transferToX;
     private int transferToY;
+    private int transferToZ;
     private String faceDirectionOnTransfer;
     private String transferToMap;
     
@@ -43,6 +44,14 @@ public class EventTransferMapInfo extends EventInfo {
 	public void setTransferToY(int transferToY) {
 		this.transferToY = transferToY;
 	}
+	public int getTransferToZ() {
+		return transferToZ;
+	}
+
+	public void setTransferToZ(int transferToZ) {
+		this.transferToZ = transferToZ;
+	}
+
 	public String getFaceDirectionOnTransfer() {
 		return faceDirectionOnTransfer;
 	}

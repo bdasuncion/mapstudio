@@ -93,6 +93,7 @@ public class MapFileReaderWriter {
 	private static final String EVENTTRANSFER_MAP = "eventtransfer_map";
 	private static final String EVENTTRANSFER_X = "eventtransfer_x";
 	private static final String EVENTTRANSFER_Y = "eventtransfer_y";
+	private static final String EVENTTRANSFER_Z = "eventtransfer_Z";
 	private static final String EVENTTRANSFER_DIRECTION = "eventtransfer_direction";
 	
 	private static final String SPRITEMASKS = "spritemasks";
@@ -250,12 +251,15 @@ public class MapFileReaderWriter {
 		x.appendChild(doc.createTextNode("" + eventInfo.getTransferToX()));
 		Element y = doc.createElement(EVENTTRANSFER_Y);
 		y.appendChild(doc.createTextNode("" + eventInfo.getTransferToY()));
+		Element z = doc.createElement(EVENTTRANSFER_Z);
+		z.appendChild(doc.createTextNode("" + eventInfo.getTransferToZ()));
 		Element direction = doc.createElement(EVENTTRANSFER_DIRECTION);
 		direction.appendChild(doc.createTextNode(eventInfo.getFaceDirectionOnTransfer()));
 		
 		event.appendChild(transferToMap);
 		event.appendChild(x);
 		event.appendChild(y);
+		event.appendChild(z);
 		event.appendChild(direction);
 	}
 	
@@ -789,6 +793,8 @@ public class MapFileReaderWriter {
 					((EventTransferMapInfo)eventInfo).setTransferToX(Integer.parseInt(eElement.getTextContent()));
 				} else if (eElement.getTagName().matches(EVENTTRANSFER_Y)) {
 					((EventTransferMapInfo)eventInfo).setTransferToY(Integer.parseInt(eElement.getTextContent()));
+				} else if (eElement.getTagName().matches(EVENTTRANSFER_Z)) {
+					((EventTransferMapInfo)eventInfo).setTransferToZ(Integer.parseInt(eElement.getTextContent()));
 				} else if (eElement.getTagName().matches(EVENTTRANSFER_DIRECTION)) {
 					((EventTransferMapInfo)eventInfo).setFaceDirectionOnTransfer(eElement.getTextContent());
 				}

@@ -42,7 +42,7 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 	private static final long serialVersionUID = 1L;
 
 	private boolean collisionLayerVisible = false;
-	private boolean gridVisible = true;
+	private boolean gridVisible = false;
 	private boolean layer0Visible = false;
 	private boolean layer1Visible = false;
 	private boolean layer2Visible = true;
