@@ -6,6 +6,8 @@ import java.awt.image.IndexColorModel;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import infoObjects.ActorInfo;
@@ -29,11 +31,12 @@ public class ExportToC {
 
 	public static void exportToCGBA(File f, MapInfo mapInfo) {
 
-		writeTileSets(f, mapInfo.getPallete(), mapInfo.getTileSets());
+		writeTileSets(f, mapInfo.getPallete(), mapInfo.getTileSets(), mapInfo);
 		writeMap(f, mapInfo);
 	}
 
-	public static void writeTileSets(File f, Vector<PalletteInfo> palletes, Vector<TileSetInfo> tileSets) {
+	public static void writeTileSets(File f, Vector<PalletteInfo> palletes, 
+			Vector<TileSetInfo> tileSets, MapInfo mapInfo) {
 		File outFile = new File(f.getParent() + "\\" + "tile_" + appendExtensionC(f.getName().toLowerCase()));
 		FileWriter tilePalletteFile = null;
 
@@ -53,6 +56,8 @@ public class ExportToC {
 			createTileSetGBA(outFile, tilePalletteFile, tileSetInfo);
 		}
 
+		writeTileSet(outFile, tilePalletteFile, mapInfo.getTileSets());
+		
 		try {
 			tilePalletteFile.flush();
 			tilePalletteFile.close();
@@ -132,7 +137,7 @@ public class ExportToC {
 			e.printStackTrace();
 		}
 
-		writeExternConst(f, mapFile, mapInfo);
+		writeMapDetails(f, mapFile, mapInfo);
 
 		try {
 			mapFile.flush();
@@ -142,7 +147,7 @@ public class ExportToC {
 		}
 	}
 
-	private static void writeExternConst(File f, FileWriter cFile, MapInfo mapInfo) {
+	private static void writeMapDetails(File f, FileWriter cFile, MapInfo mapInfo) {
 		for (PalletteInfo palletteInfo : mapInfo.getPallete()) {
 			try {
 				cFile.write("extern const unsigned short pallette_" + palletteInfo.getName() + "[16];\n");
@@ -172,7 +177,7 @@ public class ExportToC {
 		//writeCollision(f, cFile, mapInfo.getCollisionTiles());
 		writeHeightMap(f, cFile, mapInfo.getCollisionTiles());
 		
-		writeTileSet(f, cFile, mapInfo.getTileSets());
+		writeTilesUsedByMap(f, cFile, mapInfo.getTileSets());
 		
 		writePallette(f, cFile, mapInfo.getPallete());
 		
@@ -325,16 +330,6 @@ public class ExportToC {
 			}
 			tileSetNames.add(tileSetName);
 		}
-
-		try {
-			cFile.write("const TileSet *tileset_" + getFileName(f).toLowerCase() + "[] = { ");
-			for (String tileSetName : tileSetNames) {
-				cFile.write("&" + tileSetName + ", ");
-			}
-			cFile.write("};\n");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	private static void writePallette(File f, FileWriter cFile, Vector<PalletteInfo> palletteInfos) {
@@ -417,12 +412,25 @@ public class ExportToC {
 	}
 
 	private static void writeTransferEvents(File f, FileWriter cFile, Vector<EventTransferMapInfo> events) {
+		Map<String, String> transferToExternalMaps = new HashMap<String, String>();
+		
+		for (EventTransferMapInfo eventInfo : events) {
+			transferToExternalMaps.put(eventInfo.getTransferToMap(), eventInfo.getTransferToMap());
+		}
+		for (String mapName : transferToExternalMaps.values()) {
+			try {
+				cFile.write("extern const MapInfo " + mapName + ";\n");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		try {
 			cFile.write("const EventTransfer transfer_" + getFileName(f).toLowerCase() + "[] = {\n");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+		
 		for (EventTransferMapInfo eventInfo : events) {
 			try {
 				cFile.write("\t{ " + eventInfo.getX() + ", " + eventInfo.getY() + ", " + eventInfo.getTransferToX() + ", "
@@ -474,7 +482,7 @@ public class ExportToC {
 		}
 	}
 	
-	private static void writeCollision(File f, FileWriter cFile, Vector<CollisionInfo> collisionSet) {
+	/*private static void writeCollision(File f, FileWriter cFile, Vector<CollisionInfo> collisionSet) {
 		try {
 			cFile.write("const MapCollision collision_" + getFileName(f).toLowerCase() + "[] = {\n\t");
 		} catch (IOException e) {
@@ -508,7 +516,7 @@ public class ExportToC {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 	
 	private static void writeMapInfo(File f, FileWriter cFile, MapInfo mapInfo) {
 		try {
@@ -753,5 +761,35 @@ public class ExportToC {
 		String hexaVal = convert[(byteVal >> 4) & 0xf];
 		hexaVal += convert[byteVal & 0xf];
 		return hexaVal;
+	}
+	
+	private static void writeTilesUsedByMap(File f, FileWriter cFile, Vector<TileSetInfo> tileSets) {
+		Vector<String> tileSetNames = new Vector<String>();
+		for (int i = 1; i < tileSets.size(); ++i) {
+			TileSetInfo tileSetInfo = tileSets.get(i);
+			String tileSetName = "tileset_" + tileSetInfo.getFileName();
+			int count = 0;
+			for (TileInfo tile: tileSetInfo.getTileSet()) {
+				if (!tile.isEmptyImage()) {
+					++count;
+				}
+			}
+			try {
+				cFile.write("extern const TileSet " + tileSetName + ";\n");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			tileSetNames.add(tileSetName);
+		}
+
+		try {
+			cFile.write("const TileSet *tileset_" + getFileName(f).toLowerCase() + "[] = { ");
+			for (String tileSetName : tileSetNames) {
+				cFile.write("&" + tileSetName + ", ");
+			}
+			cFile.write("};\n");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
