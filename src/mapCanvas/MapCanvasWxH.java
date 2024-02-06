@@ -390,7 +390,7 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 		g2D.setStroke(new BasicStroke(0.2f));
 		g2D.setFont(new Font(g2D.getFont().getFontName(), Font.PLAIN, 6));
 		g2D.drawString(transferToMapName, displayX, info.getY() + offsetY*2);
-		g2D.drawString("(" + info.getTransferToX()+ ", " + info.getTransferToY() + ")", 
+		g2D.drawString("(" + info.getTransferToX()+ ", " + info.getTransferToY() + ", " + info.getTransferToZ() +  ")", 
 				displayX, info.getY() + offsetY*3);
 	}
 	
