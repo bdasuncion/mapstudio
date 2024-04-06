@@ -156,7 +156,7 @@ public class ExportToC {
 			}
 		}
 		
-		for (int i = 1; i < mapInfo.getTileSets().size(); ++i) {
+		/*for (int i = 1; i < mapInfo.getTileSets().size(); ++i) {
 			TileSetInfo tileSetInfo = mapInfo.getTileSets().get(i);
 			int count = 0;
 			for (TileInfo tile : tileSetInfo.getTileSet()) {
@@ -170,7 +170,7 @@ public class ExportToC {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		}
+		}*/
 		
 		writeMapEntry(f, cFile, mapInfo.getMapLayers());
 		

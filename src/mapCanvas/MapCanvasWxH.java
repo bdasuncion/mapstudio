@@ -16,6 +16,7 @@ import java.awt.image.BufferedImage;
 import java.util.Vector;
 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
 
 import infoObjects.ActorInfo;
@@ -543,7 +544,7 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 
 				xTileHighlightPosition = normalizeX(e.getX())*(snapToWidth);
 				yTileHighlightPosition = normalizeY(e.getY())*(snapToHeight);
-				
+				displayCoordinates = false;
 			} else if (e.getID() == MouseEvent.MOUSE_PRESSED && e.getButton() == MouseEvent.BUTTON3){
 				setDisplayCoordinates(e.getX(), e.getY());
 			}
@@ -554,26 +555,24 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
     	public void mouseDragged(MouseEvent e) {
 			int dragX = normalizeX(e.getX());
 			int dragY = normalizeY(e.getY());
+			int snapToWidth = 16;
+			int snapToHeight = 16;
 			
-			if (setTiles == null) {
-				return;
+			//int differenceX = (xTileSetPostion- dragX);
+			//int differenceY = (yTileSetPostion - dragY);
+			//int widthCheck = differenceX < 0 ? -differenceX : differenceX;
+			//int heightCheck = differenceY < 0 ? -differenceY: differenceY;
+			//int tileWidth = !heightMapMode ? (setTiles.getWidthInTiles()/2) : 1;
+			//int tileHeight = !heightMapMode ? (setTiles.getHeightInTiles()/2) : 1;
+			//if (SwingUtilities.isLeftMouseButton(e) && (widthCheck >= tileWidth || heightCheck >= tileHeight)) {
+			if (SwingUtilities.isLeftMouseButton(e)) {
+				displayCoordinates = false;
+				xTileSetPostion = dragX;
+				yTileSetPostion = dragY;
+				xTileHighlightPosition = dragX*snapToWidth;
+				yTileHighlightPosition = dragY*snapToHeight;
+				mapInfo.setTileSetToMap(xTileSetPostion*2, yTileSetPostion*2, setTiles, tileMode, heightMapMode);
 			}
-			//if (e.getButton() == MouseEvent.BUTTON1 ) {
-				int differenceX = (xTileSetPostion- dragX);
-				int differenceY = (yTileSetPostion - dragY);
-				int widthCheck = differenceX < 0 ? -differenceX : differenceX;
-				int heightCheck = differenceY < 0 ? -differenceY: differenceY;
-				int tileWidth = !heightMapMode ? (setTiles.getWidthInTiles()/2) : 1;
-				int tileHeight = !heightMapMode ? (setTiles.getHeightInTiles()/2) : 1;
-
-				if (e.getButton() == MouseEvent.BUTTON1 && (widthCheck >= tileWidth || heightCheck >= tileHeight)) {
-					xTileSetPostion = dragX;
-					yTileSetPostion = dragY;
-					mapInfo.setTileSetToMap(xTileSetPostion*2, yTileSetPostion*2, setTiles, tileMode, heightMapMode);
-				}
-			//} //else if (e.getButton() == MouseEvent.BUTTON3) {
-			//	System.out.println(e.getX()/scale + " " + e.getY()/scale);
-			//}
 			
 			repaint();
         }
@@ -589,19 +588,18 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 	    }
 		//@Override
 		public void mouseReleased(MouseEvent e) {
-			//if(e.getID() == MouseEvent.MOUSE_PRESSED && e.getButton() == MouseEvent.BUTTON1) {
+			if(e.getID() == MouseEvent.MOUSE_PRESSED && e.getButton() == MouseEvent.BUTTON1) {
 				int snapToWidth = 16;
 				int snapToHeight = 16;
 				
 				xTileHighlightPosition = (int)(e.getX()/(snapToWidth*scale));//*(setW);
 				yTileHighlightPosition = (int)(e.getY()/(snapToHeight*scale));//*(setH);
-				//System.out.println("MOUSE RELEASED:" + xTileHighlightPosition + " " + yTileHighlightPosition);
 				displayCoordinates = false;
-			//}
+			}
         }
 		
 		public void mouseMoved(MouseEvent e) {
-			//if (e.getID() != MouseEvent.MOUSE_DRAGGED) {
+			if (e.getID() != MouseEvent.MOUSE_DRAGGED) {
 				int highlightW = 16;
 				int highlightH = 16;
 				
@@ -611,7 +609,7 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 				if(xTileSetPositionPrev != xTileHighlightPosition || yTileSetPositionPrev != yTileHighlightPosition) {
 					repaint();
 				}
-			//}
+			}
 		}
 	}
 	
