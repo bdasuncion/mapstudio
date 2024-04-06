@@ -532,11 +532,11 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 		//@Override
 		int xTileSetPostion;
 		int yTileSetPostion;
+		int snapToWidth = 16;
+		int snapToHeight = 16;
 		public void mousePressed(MouseEvent e) {
 			if(e.getID() == MouseEvent.MOUSE_PRESSED && e.getButton() == MouseEvent.BUTTON1) {
-				int snapToWidth = 16;
-				int snapToHeight = 16;
-				
+
 				xTileSetPostion = normalizeX(e.getX());//*(setW);
 				yTileSetPostion = normalizeY(e.getY());//*(setH);
 				
@@ -555,16 +555,7 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
     	public void mouseDragged(MouseEvent e) {
 			int dragX = normalizeX(e.getX());
 			int dragY = normalizeY(e.getY());
-			int snapToWidth = 16;
-			int snapToHeight = 16;
 			
-			//int differenceX = (xTileSetPostion- dragX);
-			//int differenceY = (yTileSetPostion - dragY);
-			//int widthCheck = differenceX < 0 ? -differenceX : differenceX;
-			//int heightCheck = differenceY < 0 ? -differenceY: differenceY;
-			//int tileWidth = !heightMapMode ? (setTiles.getWidthInTiles()/2) : 1;
-			//int tileHeight = !heightMapMode ? (setTiles.getHeightInTiles()/2) : 1;
-			//if (SwingUtilities.isLeftMouseButton(e) && (widthCheck >= tileWidth || heightCheck >= tileHeight)) {
 			if (SwingUtilities.isLeftMouseButton(e)) {
 				displayCoordinates = false;
 				xTileSetPostion = dragX;
@@ -578,20 +569,15 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
         }
 		
 	   private int normalizeX(int x) {
-		   int snapToWidth = 16;
 		   return (int)(x/(snapToWidth*scale));
 	    }
 	   
 	   private int normalizeY(int y) {
-		   int snapToHeight = 16;
 		   return (int)(y/(snapToHeight*scale));
 	    }
 		//@Override
 		public void mouseReleased(MouseEvent e) {
-			if(e.getID() == MouseEvent.MOUSE_PRESSED && e.getButton() == MouseEvent.BUTTON1) {
-				int snapToWidth = 16;
-				int snapToHeight = 16;
-				
+			if(e.getID() == MouseEvent.MOUSE_PRESSED && e.getButton() == MouseEvent.BUTTON1) {				
 				xTileHighlightPosition = (int)(e.getX()/(snapToWidth*scale));//*(setW);
 				yTileHighlightPosition = (int)(e.getY()/(snapToHeight*scale));//*(setH);
 				displayCoordinates = false;
