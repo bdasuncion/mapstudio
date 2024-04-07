@@ -212,6 +212,7 @@ public class TileSetInfo {
 				}
 				tiles.get(i).setTile(read.getTile()[i]);
 				tiles.get(i).setName(formatName(getFileName(), row, column));
+				++column;
 				if (column >= read.getWidthInTiles()) {
 					column = 0;
 					++row;
