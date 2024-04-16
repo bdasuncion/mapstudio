@@ -270,7 +270,7 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 	
 	private void drawHeightMapStamp(Graphics2D g2D, BufferedImage display) {
 		int x = 0, y = 0;
-		
+		int snapToWidth = 16, snapToHeight = 16;
 		if (setTiles != null && heightMapMode) {
 			
 			if (setTiles.getCollision().size() > 0) {
@@ -282,6 +282,42 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 				g2D.fill(new Rectangle((xTileHighlightPosition + collisionInfo.getX()), 
 						(yTileHighlightPosition - collisionInfo.getHeight()),
 						collisionInfo.getWidth(), collisionInfo.getLength()));
+				
+				g2D.setColor(new Color(128, 0, 0, 190));
+				int indexX = xTileHighlightPosition/snapToWidth;
+				int indexY = (yTileHighlightPosition/snapToHeight)*(mapWidthInTiles/2);
+				System.out.println(indexX + " " + indexY);
+				for (int offsetX = -1; offsetX < 2; ++offsetX) {	
+					int resultX = indexX + offsetX;
+					if (offsetX == 0 || resultX > mapWidthInTiles || resultX < 0 || (resultX + indexY) < 0) {
+						continue;
+					}
+					System.out.println("index: " + (resultX + indexY));
+					CollisionInfo infoHighlight = mapInfo.getCollisionTiles().get(resultX + indexY);
+					System.out.println("height: " + (infoHighlight.getHeight()));
+					g2D.fill(new Rectangle((xTileHighlightPosition + (snapToWidth*offsetX) + infoHighlight.getX()), 
+							(yTileHighlightPosition - infoHighlight.getHeight()),
+							snapToWidth, snapToHeight));
+				}
+				for (int offsetY = -1; offsetY < 2; ++offsetY) {
+					int resultY = indexY + (mapWidthInTiles/2)*offsetY;
+					int checkOffsetY = (yTileHighlightPosition/snapToHeight) + offsetY;
+					if (offsetY == 0 || checkOffsetY > mapHeightInTiles || checkOffsetY < 0 || (indexX + resultY) < 0) {
+						continue;
+					}
+					
+					CollisionInfo infoHighlight = mapInfo.getCollisionTiles().get(indexX + resultY);
+					g2D.fill(new Rectangle((xTileHighlightPosition + infoHighlight.getX()), 
+							(yTileHighlightPosition + (snapToHeight*offsetY) - infoHighlight.getHeight()),
+							snapToWidth, snapToHeight));
+						//g2D.setColor(new Color(200, 200, 200, 190));
+						//g2D.drawString("" + infoHighlight.getHeight(), xTileHighlightPosition + collisionInfo.getX(), 
+						//		(yTileHighlightPosition - collisionInfo.getHeight() + 16));
+				}
+				//System.out.println(indexX + " " + indexY);
+				//System.out.println(xTileHighlightPosition + " " + yTileHighlightPosition);
+				//mapInfo.getCollisionTiles().get(index);
+				
 				g2D.setColor(new Color(200, 0, 0, 190));
 				g2D.drawString("" + collisionInfo.getHeight(), xTileHighlightPosition + collisionInfo.getX(), 
 						(yTileHighlightPosition - collisionInfo.getHeight() + 16));
