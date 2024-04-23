@@ -283,18 +283,22 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 						(yTileHighlightPosition - collisionInfo.getHeight()),
 						collisionInfo.getWidth(), collisionInfo.getLength()));
 				
-				g2D.setColor(new Color(128, 0, 0, 190));
 				int indexX = xTileHighlightPosition/snapToWidth;
 				int indexY = (yTileHighlightPosition/snapToHeight)*(mapWidthInTiles/2);
-				System.out.println(indexX + " " + indexY);
+				//System.out.println(indexX + " " + indexY);
+				CollisionInfo infoHighlight = mapInfo.getCollisionTiles().get(indexX + indexY);
+				g2D.setColor(new Color(190, 128, 0, 220));
+				g2D.fill(new Rectangle((xTileHighlightPosition + infoHighlight.getX()), 
+						(yTileHighlightPosition - infoHighlight.getHeight()),
+						snapToWidth, snapToHeight));
+				
+				g2D.setColor(new Color(128, 0, 0, 190));
 				for (int offsetX = -1; offsetX < 2; ++offsetX) {	
 					int resultX = indexX + offsetX;
 					if (offsetX == 0 || resultX > mapWidthInTiles || resultX < 0 || (resultX + indexY) < 0) {
 						continue;
 					}
-					System.out.println("index: " + (resultX + indexY));
-					CollisionInfo infoHighlight = mapInfo.getCollisionTiles().get(resultX + indexY);
-					System.out.println("height: " + (infoHighlight.getHeight()));
+					infoHighlight = mapInfo.getCollisionTiles().get(resultX + indexY);
 					g2D.fill(new Rectangle((xTileHighlightPosition + (snapToWidth*offsetX) + infoHighlight.getX()), 
 							(yTileHighlightPosition - infoHighlight.getHeight()),
 							snapToWidth, snapToHeight));
@@ -306,7 +310,7 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 						continue;
 					}
 					
-					CollisionInfo infoHighlight = mapInfo.getCollisionTiles().get(indexX + resultY);
+					infoHighlight = mapInfo.getCollisionTiles().get(indexX + resultY);
 					g2D.fill(new Rectangle((xTileHighlightPosition + infoHighlight.getX()), 
 							(yTileHighlightPosition + (snapToHeight*offsetY) - infoHighlight.getHeight()),
 							snapToWidth, snapToHeight));
@@ -314,9 +318,6 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 						//g2D.drawString("" + infoHighlight.getHeight(), xTileHighlightPosition + collisionInfo.getX(), 
 						//		(yTileHighlightPosition - collisionInfo.getHeight() + 16));
 				}
-				//System.out.println(indexX + " " + indexY);
-				//System.out.println(xTileHighlightPosition + " " + yTileHighlightPosition);
-				//mapInfo.getCollisionTiles().get(index);
 				
 				g2D.setColor(new Color(200, 0, 0, 190));
 				g2D.drawString("" + collisionInfo.getHeight(), xTileHighlightPosition + collisionInfo.getX(), 
