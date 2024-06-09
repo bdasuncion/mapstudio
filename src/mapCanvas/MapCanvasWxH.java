@@ -434,9 +434,11 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 	
 	public void processMouseWheelEvent(MouseWheelEvent e) {
     	if(e.getWheelRotation() > 0 && scale > 0.5) {
-			scale -= 0.25;
+			//scale -= 0.25;
+    		scale -= 0.10;
 		} else if((e.getWheelRotation() < 0)) {
-			scale += 0.25;
+			//scale += 0.25;
+			scale += 0.10;
 		}
    
     	this.setPreferredSize(new Dimension((int)(mapWidth*scale), (int)(mapHeight*scale)));
