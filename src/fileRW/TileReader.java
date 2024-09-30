@@ -90,10 +90,10 @@ public class TileReader
 	}
 	
 	private void readHeader() {
-		pixelSize = (int)(data[0]|(data[1]<<8)|(data[2]<<16)|(data[3]<<24));
-		widthInTiles = (int)(data[4]|(data[5]<<8)|(data[6]<<16)|(data[7]<<24));
-		heightInTiles = (int)(data[8]|(data[9]<<8)|(data[10]<<16)|(data[11]<<24));
-		numberOfTiles = (int)(data[12]|(data[13]<<8)|(data[14]<<16)|(data[15]<<24));
+		pixelSize = (int)(data[0]&0xFF|(data[1]<<8)&0xFF00|(data[2]<<16)&0xFF0000|(data[3]<<24)&0xFF000000);
+		widthInTiles = (int)(data[4]&0xFF|(data[5]<<8)&0xFF00|(data[6]<<16)&0xFF0000|(data[7]<<24)&0xFF000000);
+		heightInTiles = (int)(data[8]&0xFF|(data[9]<<8)&0xFF00|(data[10]<<16)&0xFF0000|(data[11]<<24)&0xFF000000);
+		numberOfTiles = (int)(data[12]&0xFF|(data[13]<<8)&0xFF00|(data[14]<<16)&0xFF0000|(data[15]<<24)&0xFF000000);
 	}
 	
 	private void readPalette() {
