@@ -6,6 +6,7 @@ import java.awt.image.IndexColorModel;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
@@ -29,12 +30,49 @@ public class ExportToC {
 	private static String convert[] = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E",
 			"F" };
 
+	private static int tileCount = 0;
 	public static void exportToCGBA(File f, MapInfo mapInfo) {
-
+		writeHeaderFile(f, mapInfo.getPallete(), mapInfo.getTileSets(), mapInfo);
 		writeTileSets(f, mapInfo.getPallete(), mapInfo.getTileSets(), mapInfo);
 		writeMap(f, mapInfo);
 	}
 
+	public static void writeHeaderFile(File f, Vector<PalletteInfo> palletes, 
+			Vector<TileSetInfo> tileSets, MapInfo mapInfo) {
+		File outFile = new File(f.getParent() + "\\" + "tile_" + appendExtensionH(f.getName().toLowerCase()));
+		FileWriter cFile = null;
+		try {
+			cFile = new FileWriter(outFile);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		for (PalletteInfo pallette: palletes) {
+			createPaletteForHeader16BitGBA(f, cFile, pallette);
+		}
+		
+		for (TileSetInfo tileSetInfo:tileSets) {
+			for (TileInfo tileInfo : tileSetInfo.getTileSet()) {
+				if (!tileInfo.isEmptyImage()) {
+					try {
+						cFile.write("extern const unsigned int " + tileInfo.getName() + "["
+								+ WORDS_PER_TILE + "];\n");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				} 
+				}
+		}
+		
+		try {
+			cFile.flush();
+			cFile.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	
+	}
 	public static void writeTileSets(File f, Vector<PalletteInfo> palletes, 
 			Vector<TileSetInfo> tileSets, MapInfo mapInfo) {
 		File outFile = new File(f.getParent() + "\\" + "tile_" + appendExtensionC(f.getName().toLowerCase()));
@@ -56,13 +94,23 @@ public class ExportToC {
 			createTileSetGBA(outFile, tilePalletteFile, tileSetInfo);
 		}
 
-		writeTileSet(outFile, tilePalletteFile, mapInfo.getTileSets());
+		//writeTileSet(outFile, tilePalletteFile, mapInfo.getTileSets());
 		
 		try {
 			tilePalletteFile.flush();
 			tilePalletteFile.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	private static void createPaletteForHeader16BitGBA(File f, FileWriter cFile, PalletteInfo pallette) {
+
+		IndexColorModel cm = pallette.getPallette();
+		try {
+			cFile.write("extern const unsigned short " + "pallette_" + pallette.getName() + "[];\n");
+		} catch (IOException e1) {
+			e1.printStackTrace();
 		}
 	}
 
@@ -101,10 +149,27 @@ public class ExportToC {
 	private static void createTileSetGBA(File f, FileWriter cFile, TileSetInfo tileSetInfo) {
 
 		int countTiles = 0;
+		int width = tileSetInfo.getWidthInTiles();
+		int height = tileSetInfo.getHeightInTiles();
+		int currentColumn = 0;
+		int currentRow = 0;
 		for (TileInfo tileInfo : tileSetInfo.getTileSet()) {
 			if (!tileInfo.isEmptyImage()) {
+				try {
+					cFile.write("const unsigned int " + tileInfo.getName() + "["
+							+ WORDS_PER_TILE + "] = {");
+					U324BPP1DGBA(tileInfo.getTileImage().getData().getDataBuffer(), cFile, 8, 8);
+					cFile.write("};\n");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} 
+		}
+		
+		/*for (TileInfo tileInfo : tileSetInfo.getTileSet()) {
+			if (!tileInfo.isEmptyImage()) {
 				++countTiles;
-			}
+			} 
 		}
 		
 		try {
@@ -117,13 +182,18 @@ public class ExportToC {
 		for (TileInfo tileInfo : tileSetInfo.getTileSet()) {
 			if (!tileInfo.isEmptyImage()) {
 			    U324BPP1DGBA(tileInfo.getTileImage().getData().getDataBuffer(), cFile, 8, 8);
+			    try {
+					cFile.write("\n");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		try {
 			cFile.write("};\n");
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 
 	private static void writeMap(File f, MapInfo mapInfo) {
@@ -148,13 +218,13 @@ public class ExportToC {
 	}
 
 	private static void writeMapDetails(File f, FileWriter cFile, MapInfo mapInfo) {
-		for (PalletteInfo palletteInfo : mapInfo.getPallete()) {
+		/*for (PalletteInfo palletteInfo : mapInfo.getPallete()) {
 			try {
 				cFile.write("extern const unsigned short pallette_" + palletteInfo.getName() + "[16];\n");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		}
+		}*/
 		
 		/*for (int i = 1; i < mapInfo.getTileSets().size(); ++i) {
 			TileSetInfo tileSetInfo = mapInfo.getTileSets().get(i);
@@ -177,7 +247,8 @@ public class ExportToC {
 		//writeCollision(f, cFile, mapInfo.getCollisionTiles());
 		writeHeightMap(f, cFile, mapInfo.getCollisionTiles());
 		
-		writeTilesUsedByMap(f, cFile, mapInfo.getTileSets());
+		//writeTilesUsedByMap(f, cFile, mapInfo.getTileSets());
+		writeTilesByVramIndexMap(f, cFile, mapInfo.getTileSets());
 		
 		writePallette(f, cFile, mapInfo.getPallete());
 		
@@ -324,7 +395,7 @@ public class ExportToC {
 			try {
 				cFile.write("const TileSet " + tileSetName + " = { ");
 				cFile.write(count + ", NO_COMPRESSION, ");
-				cFile.write("tile_" + tileSetInfo.getFileName() + "};\n");
+				cFile.write(tileSetInfo.getFileName() + "};\n");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -523,10 +594,12 @@ public class ExportToC {
 			String name = getFileName(f).toLowerCase();
 			cFile.write("const MapInfo " + getFileName(f).toLowerCase() + " = { "
 					+ (mapInfo.getWidthInTiles()*8) + ", " + (mapInfo.getHeightInTiles()*8) + ", "
-					+ "2, " + (mapInfo.getTileSets().size() - 1) + ", " + mapInfo.getPallete().size()
+					//+ "2, " + (mapInfo.getTileSets().size() - 1) + ", " + mapInfo.getPallete().size()
+					+ "2, " + (tileCount) + ", " + mapInfo.getPallete().size()
 					+ ", " + mapInfo.getEvents().size() + ", " + mapInfo.getActors().size() + ", "
 					+ mapInfo.getSpriteMasks().size() + ", " + (mapInfo.getMasks().size() - MaskInfo.genericMasks.length) + ", "
-					+ "NULL " + ", mapentryset_" + name + ", tileset_" + name
+					//+ "NULL " + ", mapentryset_" + name + ", tileset_" + name
+					+ "NULL " + ", mapentryset_" + name + ", vram_" + name
 					+ ", pallette_" + name + ",\ntransfer_" + name + ", heightMap_" + name + ", actors_" + name
 					+ ", spritemask_" + name + ", spritemaskimage_" + name
 					+ ", NULL, NULL, NULL, NULL, {0,0,0,0,0} };\n" );
@@ -542,11 +615,11 @@ public class ExportToC {
 		for (int k = 0; k < height / 8; k += 1) {
 			offset = (width * 4) * k;
 			for (int j = 0; j < width / 8; j++) {
-				try {
+				/*try {
 					cFile.write("\t");
 				} catch (IOException e) {
 					e.printStackTrace();
-				}
+				}*/ 
 				for (i = offset, x = 0; x < 8; i += width / 2, x++) {
 					String hexa = convertByteToHexa((imageData.getElem(i + 3) & 0xff));
 					hexa += convertByteToHexa((imageData.getElem(i + 2) & 0xff));
@@ -561,11 +634,11 @@ public class ExportToC {
 						e.printStackTrace();
 					}
 				}
-				try {
-					cFile.write(",\n");
+				/*try {
+					//cFile.write(",\n");
 				} catch (IOException e) {
 					e.printStackTrace();
-				}
+				}*/
 				offset += 4;
 			}
 		}
@@ -750,6 +823,17 @@ public class ExportToC {
 
 		return fileName + ".c";
 	}
+	
+	private static String appendExtensionH(String fileName) {
+		if (fileName.length() <= 2)
+			return fileName + ".h";
+		String ext = fileName.substring(fileName.length() - 2).toLowerCase();
+
+		if (ext.matches(".h") == true)
+			return fileName;
+
+		return fileName + ".h";
+	}
 
 	private static String convertByteToHexa(int byteVal) {
 		String hexaVal = convert[byteVal & 0xf];
@@ -761,6 +845,56 @@ public class ExportToC {
 		String hexaVal = convert[(byteVal >> 4) & 0xf];
 		hexaVal += convert[byteVal & 0xf];
 		return hexaVal;
+	}
+	
+	private static void writeTilesByVramIndexMap(File f, FileWriter cFile, Vector<TileSetInfo> tileSets) {
+		try {
+			cFile.write("const unsigned int *vram_" + getFileName(f).toLowerCase() + "[] = {\n");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		tileCount = 0;
+		for (TileSetInfo tileSetInfo:tileSets) {
+			for (TileInfo tileInfo : tileSetInfo.getTileSet()) {
+				if (!tileInfo.isEmptyImage() && tileInfo.getIndex() > tileCount) {
+					tileCount = tileInfo.getIndex();
+				}
+			}
+		}
+		
+		String tileList[] = new String[tileCount];
+		for (TileSetInfo tileSetInfo:tileSets) {
+			for (TileInfo tileInfo : tileSetInfo.getTileSet()) {
+				if (!tileInfo.isEmptyImage() && tileInfo.getIndex() > 0) {
+					tileList[tileInfo.getIndex() - 1] = tileInfo.getName();
+				}
+			}
+		}
+		int count = 0;
+		int maxperline = 8;
+		for (String tile:tileList) {
+				try {
+					if (count == 0) {
+						cFile.write("\t");
+					}
+					cFile.write(tile + ",");
+					++count;
+					if (count == maxperline) {
+						count = 0;
+						cFile.write("\n");
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+		}
+		try {
+			cFile.write("};\n");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	private static void writeTilesUsedByMap(File f, FileWriter cFile, Vector<TileSetInfo> tileSets) {

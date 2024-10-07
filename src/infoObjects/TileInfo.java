@@ -3,7 +3,7 @@ package infoObjects;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 
-import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
+//import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
 
 import tools.ImageTools;
 

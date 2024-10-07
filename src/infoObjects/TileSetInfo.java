@@ -15,6 +15,7 @@ public class TileSetInfo {
     int tileIdxStart;
     int tileIdxEnd;
     int paletteIdx = 0;
+    public static String ERASER = "ERASER";
     
     public TileSetInfo(int width, int height, BufferedImage[] tiles, int idx, String name) {
     	widthInTiles = width;
@@ -22,21 +23,31 @@ public class TileSetInfo {
     	tileSet = new Vector<TileInfo>();
     	collision = new Vector<CollisionInfo>();
     	fileName = name;
-    	
     	tileIdxStart = idx;
     	int idxSet = idx;
     	int nameIdx = 0;
+    	
+    	int currentColumn = 0;
+    	int currentRow = 0;
     	for (BufferedImage tile : tiles) {
     		TileInfo tileInfo = new TileInfo(tile);
-    		
-    		tileInfo.setName(name + "_" + nameIdx);
-    		++nameIdx;
-    		if (!tileInfo.isEmptyImage()) {
-    			tileInfo.setIndex(idxSet);
-    		    ++idxSet;
+    		if (!name.contentEquals(ERASER)) {
+	    		tileInfo.setName(TileSetInfo.formatName(name, currentRow, currentColumn));
+	    		++currentColumn;
+	    		if (currentColumn >= width) {
+	    			++currentRow;
+	    			currentColumn = 0;
+	    		}
     		} else {
-    			tileInfo.setIndex(0);
+	    		tileInfo.setName(name + "_" + nameIdx);
+	    		++nameIdx;
     		}
+    		/*if (!tileInfo.isEmptyImage()) {
+    			//tileInfo.setIndex(idxSet);
+    		    //++idxSet;
+    		} else {
+    			//tileInfo.setIndex(0);
+    		}*/
     		
     		tileSet.add(tileInfo);
     	}
@@ -54,7 +65,7 @@ public class TileSetInfo {
     	heightInTiles = height;
     	tileSet = new Vector<TileInfo>();
     	collision = new Vector<CollisionInfo>();
-    	
+    	//System.out.println("TILE SET INDFO! 22222");
     	for (TileInfo tile: tiles) {
     		tileSet.add(new TileInfo(tile));
     	}
@@ -196,6 +207,7 @@ public class TileSetInfo {
 	}
 	
 	public int reset(String parentDirectory, int tileIdxStart) {
+		System.out.println("READ TILES");
 		File tileFile = new File(parentDirectory + "\\" + getFileName() + ".tile");
 		TileReader read = new TileReader();
 		read.read(tileFile);
@@ -217,12 +229,12 @@ public class TileSetInfo {
 					column = 0;
 					++row;
 				}
-				if (!tiles.get(i).isEmptyImage()) {
+				/*if (!tiles.get(i).isEmptyImage()) {
 					tiles.get(i).setIndex(tileIdxSet);
 					++tileIdxSet;
 				} else {
 					tiles.get(i).setIndex(0);
-				}
+				}*/
 			}
 			
 			setWidthInTiles(read.getWidthInTiles());

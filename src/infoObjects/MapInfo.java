@@ -24,9 +24,11 @@ public class MapInfo {
 	Vector<ActorInfo> actors;
 	Vector<SpriteMaskInfo> spriteMasks;
 	Vector<MaskInfo> masks;
+	VramInfo vramInfo;
 	private File saveFile;
 	
 	public static final int TILE_START_IDX = 1;
+	public static final String ERASER = "EMPTY";
     
     public MapInfo(int width, int height) {
     	tileReference = new Vector<TileInfo>();
@@ -39,6 +41,7 @@ public class MapInfo {
     	actors =  new Vector<ActorInfo>();
     	spriteMasks = new Vector<SpriteMaskInfo>();
     	masks = MaskInfo.generateStandardMask();
+    	vramInfo = new VramInfo();
     	
     	widthInTiles = width;
     	heightInTiles = height;
@@ -61,17 +64,42 @@ public class MapInfo {
 		return tileSets;
 	}
     
+    private void setIndexToTileSet(TileSetInfo tileSet, String name, int index) {
+    	for (TileInfo tile: tileSet.getTileSet()) {
+    		if (tile.getName().contentEquals(name)) {
+    			tile.setIndex(index);
+    		}
+    	}
+    }
+    
     public void setTileSetToMap(int x, int y, TileSetInfo tsi, boolean isSetTiles,  boolean isSetCollision) {
     	
     	if (tsi == null) {
     		return;
     	}
+    	TileSetInfo tileSetForIndexSetting = null;
+    	for (TileSetInfo tileSet : tileSets) {
+    		if (tsi.getTileSet().size() > 0) { 
+    			if (tsi.getTileSet().get(0).getName().contains(tileSet.getFileName())) {
+    				tileSetForIndexSetting = tileSet;
+    			}
+    		}
+    	}
+    	
+    	
     	int width = tsi.getWidthInTiles(), height = tsi.getHeightInTiles();
     	Vector<TileInfo> tiles = tsi.getTileSet();
     	for (int i = 0; i < height; ++i) {
     		for (int j = 0; j < width; ++j) {
     			TileInfo tileInfo = tiles.get(j + i*width);
     			if (tileInfo.getSetToLayer() != TileInfo.NO_SET_LAYER && isSetTiles) {
+    				if (tileInfo.getIndex() == TileInfo.NO_SET_INDEX 
+    					&& !tileInfo.getName().contentEquals(ERASER)) {
+    					int index = vramInfo.setIndex(tileInfo.getName());
+    					setIndexToTileSet(tileSetForIndexSetting, tileInfo.getName(), index);
+    					tileInfo.setIndex(index);
+    					System.out.println("ADDED:" + tileInfo.getName() + " " + tileInfo.getIndex());
+    				}
     			    mapLayers.get(tileInfo.getSetToLayer()).setTileAt(x + j, y + i, tileInfo); 
     			}
     		}
@@ -113,7 +141,14 @@ public class MapInfo {
 			 tileSetNames.add(tsi.getFileName());
 			 BufferedImage tile = tsi.getTileSet().get(0).getTileImage();
 			 IndexColorModel tilePallete = (IndexColorModel) tile.getColorModel();
-			 
+			 System.out.println("ADD TILE SET");
+			 int highestIndex = 0;
+			 for (TileInfo tileInfo: tsi.getTileSet()) {
+				 if (tileInfo.getIndex() > 0) {
+					 highestIndex = vramInfo.setIndex(tileInfo.getName(), tileInfo.getIndex());
+				 }
+			 }
+			 System.out.println("HIGHEST INDEX:" + highestIndex);
 			 boolean addPalette = true;
 			 for(PalletteInfo paletteInfo: paletteInfos) {
 				 if (!isDifferentPalletes(tilePallete, paletteInfo.getPallette())) {
@@ -270,7 +305,6 @@ public class MapInfo {
 			}
 			for (TileInfo tile: tileSet.getTileSet()) {
 				if (tileFromLayer.getName().equals(tile.getName())) {
-			//		updated = true;
 					tileFromLayer.setIndex(tile.getIndex());
 					tileFromLayer.setTile(tile.getTileImage());
 					tileFromLayer.setPalletteIndex(tileSet.getPaletteIdx());
@@ -280,7 +314,7 @@ public class MapInfo {
 		}
 		
 		tileFromLayer = new TileInfo(8, 8);
-		tileFromLayer.setName("EMPTY");
+		tileFromLayer.setName(ERASER);
 		tileFromLayer.setTile(ImageTools.createEraserTile(8,8));
 		tileFromLayer.setIndex(0);
 		//tileFromLayer.setTile(ImageTools.createEmptyImage(8, 8));

@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -27,7 +28,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
+//import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import infoObjects.ActorInfo;
 import infoObjects.CollisionInfo;
@@ -570,6 +571,7 @@ public class MapFileReaderWriter {
 		TileReader read = null;
 		String name = "";
 		Vector<TileInfo> tiles = new Vector<TileInfo>();
+		HashMap<String, Integer> tilesIndex = new HashMap<String, Integer>();
 		Vector<CollisionInfo> collisionMap = new Vector<CollisionInfo>();
 		for (int idx = 0; idx < tileSet.getLength(); idx++) {
 			Node tileSetAttributeNode = tileSet.item(idx);
@@ -585,14 +587,13 @@ public class MapFileReaderWriter {
 					read = new TileReader();
 					read.read(tileFile);
 				} else if (eElement.getTagName().matches(TILES)) {
-					//readTileList(eElement.getChildNodes(), tiles);
+					readTileList(eElement.getChildNodes(), tilesIndex);
 				} else if (eElement.getTagName().matches(TILESETCOLLISION)) {
 					readCollisionMap(eElement.getChildNodes(), collisionMap);
 				}
 			}
 		}
 		if (read != null) {
-			int tileIdxSet = tileIdx;
 			int row = 0, column = 0;
 			for (int i = 0; i < read.getTile().length; ++i) {
 				if (tiles.size() >= i) {
@@ -607,12 +608,13 @@ public class MapFileReaderWriter {
 					column = 0;
 					++row;
 				}
-				if (!tiles.get(i).isEmptyImage()) {
-					tiles.get(i).setIndex(tileIdxSet);
-					++tileIdxSet;
+				tiles.get(i).setIndex(tilesIndex.get(tiles.get(i).getName()));
+				/*if (!tiles.get(i).isEmptyImage()) {
+					//tiles.get(i).setIndex(tileIdxSet);
+					//++tileIdxSet;
 				} else {
 					tiles.get(i).setIndex(0);
-				}
+				}*/
 			}
 			TileSetInfo tileSetInfo = new TileSetInfo(read.getWidthInTiles(), 
 					read.getHeightInTiles(), tiles, collisionMap);
@@ -623,13 +625,14 @@ public class MapFileReaderWriter {
 		return tileIdxReturn;
 	}
 
-	public void readTileList(NodeList tileSet, Vector<TileInfo> tiles) {
+	public void readTileList(NodeList tileSet, HashMap<String, Integer> tilesIndex) {
 		for (int idx = 0; idx < tileSet.getLength(); idx++) {
 			Node tileSetAttributeNode = tileSet.item(idx);
 			if (tileSetAttributeNode.getNodeType() == Node.ELEMENT_NODE) {
 				Element eElement = (Element) tileSetAttributeNode;
 				if (eElement.getTagName().matches(TILE)) {
-					tiles.add(readTile(eElement.getChildNodes()));
+					TileInfo tileInfo = readTile(eElement.getChildNodes());
+					tilesIndex.put(tileInfo.getName(), tileInfo.getIndex());
 				}
 			}
 		}
