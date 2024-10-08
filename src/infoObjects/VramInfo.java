@@ -12,7 +12,6 @@ public class VramInfo {
 	
 	public int setIndex(String tileName) {
 		if (!vramMap.containsKey(tileName)) {
-			System.out.println("CURR:" + currentIndex);
 			++currentIndex;
 			vramMap.put(tileName, currentIndex);
 			return currentIndex;
@@ -26,6 +25,15 @@ public class VramInfo {
 			currentIndex = index;
 		}
 		return currentIndex;
+	}
+	
+	public String[] getIndexedTiles() {
+		
+		String tileList[] = new String[currentIndex];
+		for (String tileName:vramMap.keySet()) {
+			tileList[vramMap.get(tileName) - 1] = tileName;
+		}
+		return tileList;
 	}
 	
 }

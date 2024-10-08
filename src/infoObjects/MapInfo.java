@@ -141,14 +141,13 @@ public class MapInfo {
 			 tileSetNames.add(tsi.getFileName());
 			 BufferedImage tile = tsi.getTileSet().get(0).getTileImage();
 			 IndexColorModel tilePallete = (IndexColorModel) tile.getColorModel();
-			 System.out.println("ADD TILE SET");
 			 int highestIndex = 0;
 			 for (TileInfo tileInfo: tsi.getTileSet()) {
 				 if (tileInfo.getIndex() > 0) {
 					 highestIndex = vramInfo.setIndex(tileInfo.getName(), tileInfo.getIndex());
 				 }
 			 }
-			 System.out.println("HIGHEST INDEX:" + highestIndex);
+
 			 boolean addPalette = true;
 			 for(PalletteInfo paletteInfo: paletteInfos) {
 				 if (!isDifferentPalletes(tilePallete, paletteInfo.getPallette())) {

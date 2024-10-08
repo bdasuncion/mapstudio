@@ -22,6 +22,7 @@ import infoObjects.PalletteInfo;
 import infoObjects.SpriteMaskInfo;
 import infoObjects.TileInfo;
 import infoObjects.TileSetInfo;
+import infoObjects.VramInfo;
 import mapBlock.Map32x32Tiles;
 import mapBlock.MapWxH;
 
@@ -29,6 +30,8 @@ public class ExportToC {
 	private static final int WORDS_PER_TILE = 8;
 	private static String convert[] = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E",
 			"F" };
+	
+	private static VramInfo vramIndex;
 
 	private static int tileCount = 0;
 	public static void exportToCGBA(File f, MapInfo mapInfo) {
@@ -343,10 +346,15 @@ public class ExportToC {
 	}
 
 	private static void writeMapLayer(FileWriter cFile, MapLayerInfo mapLayerInfo) {
+		vramIndex = new VramInfo();
 		for (int i = 0; i < mapLayerInfo.getTiles().size(); ++i) {
 			TileInfo tileInfo = mapLayerInfo.getTiles().get(i);
 
-			int tileIdx = tileInfo.getIndex();
+			//int tileIdx = tileInfo.getIndex();
+			int tileIdx = 0;
+			if (!tileInfo.getName().contains("ERASER") && !tileInfo.isEmptyImage()) {
+				tileIdx = vramIndex.setIndex(tileInfo.getName());
+			}
 			int hflip = (tileInfo.isHflip() ? 1 << 10 : 0);
 			int vflip = (tileInfo.isVflip() ? 1 << 11 : 0);
 			int palIndex = (tileInfo.getPalletteIndex()) << 12;
@@ -855,23 +863,9 @@ public class ExportToC {
 			e.printStackTrace();
 		}
 		
-		tileCount = 0;
-		for (TileSetInfo tileSetInfo:tileSets) {
-			for (TileInfo tileInfo : tileSetInfo.getTileSet()) {
-				if (!tileInfo.isEmptyImage() && tileInfo.getIndex() > tileCount) {
-					tileCount = tileInfo.getIndex();
-				}
-			}
-		}
-		
-		String tileList[] = new String[tileCount];
-		for (TileSetInfo tileSetInfo:tileSets) {
-			for (TileInfo tileInfo : tileSetInfo.getTileSet()) {
-				if (!tileInfo.isEmptyImage() && tileInfo.getIndex() > 0) {
-					tileList[tileInfo.getIndex() - 1] = tileInfo.getName();
-				}
-			}
-		}
+		String tileList[] = vramIndex.getIndexedTiles();
+		tileCount = tileList.length;
+
 		int count = 0;
 		int maxperline = 8;
 		for (String tile:tileList) {
