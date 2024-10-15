@@ -9,9 +9,18 @@ import mapCanvas.MapCanvasWxH;
 
 public class MapCanvasInternalFrame extends JInternalFrame {
 	private MapCanvasWxH mapView;
-	
+	private static final int minTileWidth = 16;
+	private static final int minTileheight = 16;
 	public MapCanvasInternalFrame(MapInfo mi, int width, int height, int tileWidth, int tileHeight) {
 		super("", true, true);
+		
+		if (width%minTileWidth > 0) {
+			width = ((width/minTileWidth)+ 1 )* minTileWidth;
+		}
+		
+		if (height%minTileheight > 0) {
+			height = ((height/minTileheight)+ 1 )* minTileheight;
+		}
 		
         StringBuilder mapTitle = new StringBuilder();
 		
