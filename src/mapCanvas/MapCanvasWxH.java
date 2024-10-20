@@ -104,15 +104,8 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 		tileHeight = heightOfTile;
 		
 		mapInfo = mi;
-		if(widthInPixels%widthOfTile == 0)
-			mapWidth = widthInPixels;
-		else
-			mapWidth = widthInPixels + (widthOfTile - widthInPixels%widthOfTile);
-		
-		if(heightInPixels%heightOfTile == 0)
-			mapHeight = heightInPixels;
-		else
-			mapHeight = heightInPixels + (heightOfTile - heightInPixels%heightOfTile);
+		mapWidth = widthInPixels;
+		mapHeight = heightInPixels;
 				
 		mapWidthInTiles = mapWidth/tileWidth;
 		mapHeightInTiles = mapHeight/tileHeight;

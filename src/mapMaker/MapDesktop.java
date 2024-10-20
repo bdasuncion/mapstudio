@@ -67,6 +67,9 @@ public class MapDesktop extends JDesktopPane
 	private int collisionHeight = 8;
 	private MapInfo mapInfo;
 	
+	private static final int minTileWidth = 16;
+	private static final int minTileheight = 16;
+	
 	public MapDesktop(JFrame owner, int width, int height,
 			int tileW, int tileH) {
 		this.setBackground(Color.GRAY);
@@ -74,7 +77,17 @@ public class MapDesktop extends JDesktopPane
 		tileWidth = tileW;
 		tileHeight = tileH;
 		
-		mapInfo = new MapInfo(width/8, height/8);
+		int widthSet = width;
+		if (width%minTileWidth > 0) {
+			widthSet = ((width/minTileWidth)+ 1 )* minTileWidth;
+		}
+		
+		int heightSet = height;
+		if (height%minTileheight > 0) {
+			heightSet = ((height/minTileheight)+ 1 )* minTileheight;
+		}
+		
+		mapInfo = new MapInfo(widthSet/8, heightSet/8);
 		
 		TileFrame = new TileInternalFrame(tileWidth, tileHeight, mapInfo.getTileReference());
 		mapTilesInVRAM = TileFrame.getMapTilesPanel();
@@ -91,7 +104,7 @@ public class MapDesktop extends JDesktopPane
 		tilesetButtonsFrame.setVisible(true);
 		tilesetButtonsFrame.setLocation(500, 0);
 		
-		mapFrame = new MapCanvasInternalFrame(mapInfo, width, height, tileWidth, tileHeight);
+		mapFrame = new MapCanvasInternalFrame(mapInfo, widthSet, heightSet, tileWidth, tileHeight);
 		mapView = mapFrame.getMapView();
 
 		tileSetFrame = new TileSetInternalFrame(owner, tileWidth, tileHeight, mapView, mapView, mapView);
