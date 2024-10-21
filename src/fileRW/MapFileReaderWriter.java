@@ -608,7 +608,7 @@ public class MapFileReaderWriter {
 					column = 0;
 					++row;
 				}
-				tiles.get(i).setIndex(tilesIndex.get(tiles.get(i).getName()));
+				//tiles.get(i).setIndex(tilesIndex.get(tiles.get(i).getName()));
 				/*if (!tiles.get(i).isEmptyImage()) {
 					//tiles.get(i).setIndex(tileIdxSet);
 					//++tileIdxSet;
