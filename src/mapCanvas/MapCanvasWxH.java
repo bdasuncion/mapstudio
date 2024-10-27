@@ -285,16 +285,27 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 						(yTileHighlightPosition - infoHighlight.getHeight()),
 						snapToWidth, snapToHeight));
 				
-				g2D.setColor(new Color(128, 0, 0, 190));
+				int positionOffset = 12;
 				for (int offsetX = -1; offsetX < 2; ++offsetX) {	
 					int resultX = indexX + offsetX;
 					if (offsetX == 0 || resultX > mapWidthInTiles || resultX < 0 || (resultX + indexY) < 0) {
 						continue;
 					}
+					String label = "";
+					if (offsetX == -1) {
+						label = "L";
+					} else {
+						label = "R";
+					}
 					infoHighlight = mapInfo.getCollisionTiles().get(resultX + indexY);
+					g2D.setColor(new Color(128, 0, 0, 190));
 					g2D.fill(new Rectangle((xTileHighlightPosition + (snapToWidth*offsetX) + infoHighlight.getX()), 
 							(yTileHighlightPosition - infoHighlight.getHeight()),
 							snapToWidth, snapToHeight));
+					g2D.setColor(new Color(0, 0, 0, 255));
+					g2D.drawString(label, xTileHighlightPosition + (snapToWidth*offsetX) + infoHighlight.getX(), 
+					(yTileHighlightPosition - infoHighlight.getHeight() + positionOffset));
+
 				}
 				for (int offsetY = -1; offsetY < 2; ++offsetY) {
 					int resultY = indexY + (mapWidthInTiles/2)*offsetY;
@@ -302,11 +313,21 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 					if (offsetY == 0 || checkOffsetY > mapHeightInTiles || checkOffsetY < 0 || (indexX + resultY) < 0) {
 						continue;
 					}
-					
+					String label = "";
+					if (offsetY == -1) {
+						label = "U";
+					} else {
+						label = "D";
+					}
 					infoHighlight = mapInfo.getCollisionTiles().get(indexX + resultY);
+					g2D.setColor(new Color(128, 0, 0, 190));
 					g2D.fill(new Rectangle((xTileHighlightPosition + infoHighlight.getX()), 
 							(yTileHighlightPosition + (snapToHeight*offsetY) - infoHighlight.getHeight()),
 							snapToWidth, snapToHeight));
+					g2D.setColor(new Color(0, 0, 0, 255));
+					g2D.drawString(label, xTileHighlightPosition + infoHighlight.getX(), 
+							(yTileHighlightPosition + (snapToHeight*offsetY) - infoHighlight.getHeight() + positionOffset));
+
 						//g2D.setColor(new Color(200, 200, 200, 190));
 						//g2D.drawString("" + infoHighlight.getHeight(), xTileHighlightPosition + collisionInfo.getX(), 
 						//		(yTileHighlightPosition - collisionInfo.getHeight() + 16));
