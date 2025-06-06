@@ -21,7 +21,6 @@ import javax.swing.SpinnerNumberModel;
 import infoObjects.ActorInfo;
 import infoObjects.EventInfo;
 import infoObjects.EventTransferMapInfo;
-import javafx.scene.control.ComboBox;
 
 public class EventSettingDialog extends JDialog implements ActionListener, KeyListener {
 	//JTextField nameField;

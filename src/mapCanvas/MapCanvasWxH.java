@@ -459,6 +459,34 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 		this.revalidate();
 		repaint();
     }
+	
+	public void processKeyEvent(KeyEvent e){
+		if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+			System.out.println("LEFT");
+			for (int i = 0; i < mapInfo.getMapLayers().size(); ++i) {
+				mapInfo.getMapLayers().get(i).shiftLeft();
+			}
+			this.repaint();
+		} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+			System.out.println("RIGHT");
+			for (int i = 0; i < mapInfo.getMapLayers().size(); ++i) {
+				mapInfo.getMapLayers().get(i).shiftRight();
+			}
+			this.repaint();
+		} else if (e.getKeyCode() == KeyEvent.VK_UP) {
+			System.out.println("UP");
+			for (int i = 0; i < mapInfo.getMapLayers().size(); ++i) {
+				mapInfo.getMapLayers().get(i).shiftUp();
+			}
+			this.repaint();
+		} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+			System.out.println("DOWN");
+			for (int i = 0; i < mapInfo.getMapLayers().size(); ++i) {
+				mapInfo.getMapLayers().get(i).shiftDown();
+			}
+			this.repaint();
+		}
+	}
 
 	public int getMapHeightInTiles() {
 		return mapHeightInTiles;
@@ -471,7 +499,7 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 	public MapInfo getMapInfo() {
 		return mapInfo;
 	}
-
+	
 	@Override
 	public void setTiles(TileSetInfo ts) {
 		setTiles = ts;
