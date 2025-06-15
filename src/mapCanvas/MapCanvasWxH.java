@@ -460,32 +460,39 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 		repaint();
     }
 	
-	public void processKeyEvent(KeyEvent e){
-		if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+	@Override
+	public void keyReleased(KeyEvent e){
+		if (e.getKeyCode() == KeyEvent.VK_A) {
 			System.out.println("LEFT");
 			for (int i = 0; i < mapInfo.getMapLayers().size(); ++i) {
 				mapInfo.getMapLayers().get(i).shiftLeft();
+				mapInfo.getMapLayers().get(i).shiftLeft();
 			}
-			this.repaint();
-		} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+			mapInfo.getCollisionLayer().shiftLeft();
+		} else if (e.getKeyCode() == KeyEvent.VK_D) {
 			System.out.println("RIGHT");
 			for (int i = 0; i < mapInfo.getMapLayers().size(); ++i) {
 				mapInfo.getMapLayers().get(i).shiftRight();
+				mapInfo.getMapLayers().get(i).shiftRight();
 			}
-			this.repaint();
-		} else if (e.getKeyCode() == KeyEvent.VK_UP) {
+			mapInfo.getCollisionLayer().shiftRight();
+		} else if (e.getKeyCode() == KeyEvent.VK_W) {
 			System.out.println("UP");
 			for (int i = 0; i < mapInfo.getMapLayers().size(); ++i) {
 				mapInfo.getMapLayers().get(i).shiftUp();
+				mapInfo.getMapLayers().get(i).shiftUp();
 			}
-			this.repaint();
-		} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+			mapInfo.getCollisionLayer().shiftUp();
+		} else if (e.getKeyCode() == KeyEvent.VK_S) {
 			System.out.println("DOWN");
 			for (int i = 0; i < mapInfo.getMapLayers().size(); ++i) {
 				mapInfo.getMapLayers().get(i).shiftDown();
+				mapInfo.getMapLayers().get(i).shiftDown();
 			}
-			this.repaint();
+			mapInfo.getCollisionLayer().shiftDown();
 		}
+		System.out.println("PRESSED");
+		this.repaint();
 	}
 
 	public int getMapHeightInTiles() {
@@ -536,11 +543,11 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 		repaint();
 	}
 
-	@Override
-	public void keyReleased(KeyEvent arg0) {
+	//@Override
+	//public void keyReleased(KeyEvent arg0) {
 		// TODO Auto-generated method stub
 		
-	}
+	//}
 
 	@Override
 	public void keyTyped(KeyEvent arg0) {

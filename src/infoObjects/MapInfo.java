@@ -16,7 +16,8 @@ public class MapInfo {
     Vector<TileSetInfo> tileSets;
 
 	Vector<MapLayerInfo> mapLayers;
-	Vector<CollisionInfo> collisionTiles;
+	//Vector<CollisionInfo> collisionTiles;
+	CollisionLayerInfo collisionLayerTiles;
 	Vector<PalletteInfo> paletteInfos;
 	Map<String, String> tileSetNamesMap;
 	Vector<String> tileSetNames;
@@ -42,6 +43,7 @@ public class MapInfo {
     	spriteMasks = new Vector<SpriteMaskInfo>();
     	masks = MaskInfo.generateStandardMask();
     	vramInfo = new VramInfo();
+    	collisionLayerTiles = new CollisionLayerInfo(width, height);
     	
     	widthInTiles = width;
     	heightInTiles = height;
@@ -49,11 +51,11 @@ public class MapInfo {
     		mapLayers.add(new MapLayerInfo(width, height));
     	}
     	
-    	collisionTiles = new Vector<CollisionInfo>();
+    	//collisionTiles = new Vector<CollisionInfo>();
     	
-    	for (int i = 0; i < (widthInTiles*heightInTiles)/2; ++i ) {
-    		collisionTiles.add(new CollisionInfo());
-    	}
+    	//for (int i = 0; i < (widthInTiles*heightInTiles)/2; ++i ) {
+    	//	collisionTiles.add(new CollisionInfo());
+    	//}
     }
     
     public Vector<TileInfo> getTileReference() {
@@ -119,11 +121,13 @@ public class MapInfo {
 	}
     
 	public Vector<CollisionInfo> getCollisionTiles() {
-		return collisionTiles;
+		//return collisionTiles;
+		return collisionLayerTiles.getCollisionTiles();
 	}
 
 	public void setCollisionTiles(Vector<CollisionInfo> collisionTiles) {
-		this.collisionTiles = collisionTiles;
+		//this.collisionTiles = collisionTiles;
+		this.collisionLayerTiles.setCollisionTiles(collisionTiles);
 	}
 	
 	 public void setCollisionAt(int x, int y, CollisionInfo ci) {
@@ -132,7 +136,12 @@ public class MapInfo {
     		return;
     	}
     	
-    	collisionTiles.get(x + y*collisionWidth).set(ci);
+    	//collisionTiles.get(x + y*collisionWidth).set(ci);
+    	collisionLayerTiles.setCollisionAt(x, y, ci);
+	 }
+	 
+	 public CollisionLayerInfo getCollisionLayer() {
+		 return collisionLayerTiles;
 	 }
 	 
 	 public boolean addTileSet(TileSetInfo tsi) {

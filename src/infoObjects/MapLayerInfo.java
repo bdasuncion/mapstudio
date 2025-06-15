@@ -36,13 +36,13 @@ public class MapLayerInfo {
     }
     
     public void shiftUp() {
-    	System.out.println("SHIFT UP");
     	Vector<TileInfo> tilesCopy = copyTiles();
         
         int width = this.widthInTiles;
         int height = this.heightInTiles;
-        
-        for(int count = 0; count < 2; ++count) {
+        System.out.println("WIDTH IN TILES: " + this.widthInTiles + " HEIGHT IN TILES: " + this.heightInTiles);
+
+        //for(int count = 0; count < 2; ++count) {
 	        for (int i = 0; i < height; ++i) {
 	        	int copyFromRow = (i + 1)%height;
 	        	int copyToRow = i%height;
@@ -51,7 +51,7 @@ public class MapLayerInfo {
 	        		setTileAt(j, copyToRow, tilesCopy.get(copyFromRow*width + j));
 	        	}
 	        }
-        }
+        //}
     }
     
     public void shiftDown() {
@@ -59,8 +59,9 @@ public class MapLayerInfo {
         
         int width = this.widthInTiles;
         int height = this.heightInTiles;
+        System.out.println("WIDTH IN TILES: " + this.widthInTiles + " HEIGHT IN TILES: " + this.heightInTiles);
         
-        for(int count = 0; count < 2; ++count) {
+        //for(int count = 0; count < 2; ++count) {
 	        for (int i = 0; i < height; ++i) {
 	        	int copyFromRow = i%height;
 	        	int copyToRow = (i + 1)%height;
@@ -69,7 +70,7 @@ public class MapLayerInfo {
 	        		setTileAt(j, copyToRow, tilesCopy.get(copyFromRow*width + j));
 	        	}
 	        }
-        }
+        //}
     }
     
     public void shiftLeft() {
@@ -77,8 +78,9 @@ public class MapLayerInfo {
         
         int width = this.widthInTiles;
         int height = this.heightInTiles;
-        
-        for(int count = 0; count < 2; ++count) {
+        System.out.println("WIDTH IN TILES: " + this.widthInTiles + " HEIGHT IN TILES: " + this.heightInTiles);
+
+        //for(int count = 0; count < 2; ++count) {
 	        for (int i = 0; i < height; ++i) {
 	        	for (int j = 0; j < width; ++j) {
 	        		int copyFromColumn = (j + 1)%width;
@@ -86,7 +88,7 @@ public class MapLayerInfo {
 	        		setTileAt(j, i, tilesCopy.get(i*width + copyFromColumn));
 	        	}
 	        }
-        }
+        //}
     }
     
     public void shiftRight() {
@@ -94,8 +96,9 @@ public class MapLayerInfo {
         
         int width = this.widthInTiles;
         int height = this.heightInTiles;
-        
-        for(int count = 0; count < 2; ++count) {
+        System.out.println("WIDTH IN TILES: " + this.widthInTiles + " HEIGHT IN TILES: " + this.heightInTiles);
+
+        //for(int count = 0; count < 2; ++count) {
 	        for (int i = 0; i < height; ++i) {
 	        	for (int j = 0; j < width; ++j) {
 	        		int copyToColumn = (j + 1)%width;
@@ -104,7 +107,7 @@ public class MapLayerInfo {
 	        		setTileAt(copyToColumn, i, tilesCopy.get(i*width + copyFromColumn));
 	        	}
 	        }
-        }
+        //}
     }
     
     public void resize(int newWidth, int newHeight) {
