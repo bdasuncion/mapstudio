@@ -2,7 +2,9 @@ package mapCanvas;
 
 import java.awt.AWTEvent;
 import java.awt.BasicStroke;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -15,6 +17,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.image.BufferedImage;
 import java.util.Vector;
 
+import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
@@ -98,6 +101,7 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 	
 	public MapCanvasWxH(MapInfo mi, int widthInPixels, int heightInPixels, 
 	int widthOfTile, int heightOfTile) {
+		super();
 		//this.enableEvents(AWTEvent.MOUSE_WHEEL_EVENT_MASK|AWTEvent.MOUSE_MOTION_EVENT_MASK);
 		this.enableEvents(AWTEvent.MOUSE_WHEEL_EVENT_MASK);
 		tileWidth = widthOfTile;
@@ -111,11 +115,6 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 		mapHeightInTiles = mapHeight/tileHeight;
 		
 		this.addKeyListener(this);
-		setFocusable(true);
-		
-		this.setPreferredSize(new Dimension((int)(mapWidth*scale), (int)(mapHeight*scale)));
-		this.revalidate();
-		this.setVisible(true);
 		
 		tileSettingMouseAdapter = new TileSetting();
 		actorSettingMouseAdapter = new ActorSetting();
@@ -128,7 +127,26 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 		actorSettingDialog = new ActorSettingDialog(null);
 		eventSettingDialog = new EventSettingDialog(null);
 		spriteMaskSettingDialog = new SpriteMaskSettingDialog(null, mapInfo.getMasks());
+		
+		setFocusable(true);
+		requestFocusInWindow();
+		setLayout(null);
+		
+		setPreferredSize(new Dimension((int)(mapWidth*scale), (int)(mapHeight*scale)));
+		System.out.println("Inside W: " + (mapWidth*scale) + " H:" + (mapHeight*scale));
+		
+		//this.repaint();
 	}
+	
+	@Override
+	public Dimension getPreferredSize() {
+		return new Dimension((int)(mapWidth*scale), (int)(mapHeight*scale));
+	}
+	
+	//@Override
+	//public Dimension getSize() {
+	//	return new Dimension((int)(mapWidth*scale), (int)(mapHeight*scale));
+	//}
 	
 	public void setScale(int s) {
 		scale = s;
@@ -137,8 +155,14 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 		this.repaint();
 	}
 	
+	@Override
 	public void paintComponent(Graphics g) {
+		System.out.println("DRAW ALL");
 		super.paintComponent(g);
+		
+		//g.setColor(Color.BLUE);
+        //g.fillRect(100, 100, 200, 200);
+         
 		Graphics2D g2D =(Graphics2D)g;
 	
 		g2D.fill(new Rectangle(0, 0, (int)(mapWidth*scale), (int)(mapHeight*scale)));
@@ -146,32 +170,31 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 				mapWidth, mapHeight);
 	
 		g2D.scale(scale, scale);
-		
 		if(layer3Visible == true && mapInfo != null && 
 			mapInfo.getMapLayers().get(3).getMapDisplay() != null) {
 				display = mapInfo.getMapLayers().get(3).getMapDisplay();
-				
+				System.out.println("DRAW 1");
 				g2D.drawImage(display, 0, 0, display.getWidth(),display.getHeight(), this);
 		}
 		
 		if(layer2Visible == true && mapInfo != null && 
 				mapInfo.getMapLayers().get(2).getMapDisplay() != null) {
 				display = mapInfo.getMapLayers().get(2).getMapDisplay();
-				
+				System.out.println("DRAW 2");
 				g2D.drawImage(display, 0, 0, display.getWidth(),display.getHeight(), this);
 		}
 		
 		if(layer1Visible == true && mapInfo != null && 
 			mapInfo.getMapLayers().get(1).getMapDisplay() != null) {
 				display = mapInfo.getMapLayers().get(1).getMapDisplay();
-				
+				System.out.println("DRAW 3");
 				g2D.drawImage(display, 0, 0, display.getWidth(),display.getHeight(), this);
 		}
 		
 		if(layer0Visible == true && mapInfo != null && 
 			mapInfo.getMapLayers().get(0).getMapDisplay() != null) {
 				display = mapInfo.getMapLayers().get(0).getMapDisplay();
-				
+				System.out.println("DRAW 4");
 				g2D.drawImage(display, 0, 0, display.getWidth(),display.getHeight(), this);
 		}
 		
@@ -447,6 +470,7 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 	}
 	
 	public void processMouseWheelEvent(MouseWheelEvent e) {
+		System.out.println("SCROLL MOUSE WHEEL");
     	if(e.getWheelRotation() > 0 && scale > 0.5) {
 			//scale -= 0.25;
     		scale -= 0.10;
@@ -460,40 +484,20 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 		repaint();
     }
 	
-	@Override
+	/*@Override
 	public void keyReleased(KeyEvent e){
 		if (e.getKeyCode() == KeyEvent.VK_A) {
-			System.out.println("LEFT");
-			for (int i = 0; i < mapInfo.getMapLayers().size(); ++i) {
-				mapInfo.getMapLayers().get(i).shiftLeft();
-				mapInfo.getMapLayers().get(i).shiftLeft();
-			}
-			mapInfo.getCollisionLayer().shiftLeft();
+
 		} else if (e.getKeyCode() == KeyEvent.VK_D) {
-			System.out.println("RIGHT");
-			for (int i = 0; i < mapInfo.getMapLayers().size(); ++i) {
-				mapInfo.getMapLayers().get(i).shiftRight();
-				mapInfo.getMapLayers().get(i).shiftRight();
-			}
-			mapInfo.getCollisionLayer().shiftRight();
+			
 		} else if (e.getKeyCode() == KeyEvent.VK_W) {
-			System.out.println("UP");
-			for (int i = 0; i < mapInfo.getMapLayers().size(); ++i) {
-				mapInfo.getMapLayers().get(i).shiftUp();
-				mapInfo.getMapLayers().get(i).shiftUp();
-			}
-			mapInfo.getCollisionLayer().shiftUp();
+			
 		} else if (e.getKeyCode() == KeyEvent.VK_S) {
-			System.out.println("DOWN");
-			for (int i = 0; i < mapInfo.getMapLayers().size(); ++i) {
-				mapInfo.getMapLayers().get(i).shiftDown();
-				mapInfo.getMapLayers().get(i).shiftDown();
-			}
-			mapInfo.getCollisionLayer().shiftDown();
+			
 		}
 		System.out.println("PRESSED");
 		this.repaint();
-	}
+	}*/
 
 	public int getMapHeightInTiles() {
 		return mapHeightInTiles;
@@ -791,7 +795,20 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 	@Override
 	public void reloadMap() {
 		mapInfo.reset();
+		this.setPreferredSize(new Dimension((int)(mapWidth*scale), (int)(mapHeight*scale)));
+		this.setSize(this.getPreferredSize());
+		this.revalidate();
 		repaint();
+		
+		Container parent = this.getParent();
+		if (parent != null) {
+		    parent.revalidate();   // notify parent layout
+		    parent.repaint();      // refresh visuals
+		}
+		
+		SwingUtilities.invokeLater(() -> {
+		    System.out.println("MapView actual size: " + getWidth() + " x " + getHeight());
+		});
 	}
 
 	@Override
@@ -809,5 +826,68 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 	@Override
 	public void setAsMapHeightMode(boolean b) {
 		heightMapMode = b;
+	}
+
+	@Override
+	public void shiftLeft() {
+		// TODO Auto-generated method stub
+		System.out.println("LEFT");
+		for (int i = 0; i < mapInfo.getMapLayers().size(); ++i) {
+			mapInfo.getMapLayers().get(i).shiftLeft();
+			mapInfo.getMapLayers().get(i).shiftLeft();
+		}
+		mapInfo.getCollisionLayer().shiftLeft();
+		repaint();
+	}
+
+	@Override
+	public void shiftRight() {
+		// TODO Auto-generated method stub
+		System.out.println("RIGHT");
+		for (int i = 0; i < mapInfo.getMapLayers().size(); ++i) {
+			mapInfo.getMapLayers().get(i).shiftRight();
+			mapInfo.getMapLayers().get(i).shiftRight();
+		}
+		mapInfo.getCollisionLayer().shiftRight();
+		repaint();
+	}
+
+	@Override
+	public void shiftUp() {
+		// TODO Auto-generated method stub
+		System.out.println("UP");
+		for (int i = 0; i < mapInfo.getMapLayers().size(); ++i) {
+			mapInfo.getMapLayers().get(i).shiftUp();
+			mapInfo.getMapLayers().get(i).shiftUp();
+		}
+		mapInfo.getCollisionLayer().shiftUp();
+		repaint();
+	}
+
+	@Override
+	public void shiftDown() {
+		// TODO Auto-generated method stub
+		System.out.println("DOWN");
+		for (int i = 0; i < mapInfo.getMapLayers().size(); ++i) {
+			mapInfo.getMapLayers().get(i).shiftDown();
+			mapInfo.getMapLayers().get(i).shiftDown();
+		}
+		mapInfo.getCollisionLayer().shiftDown();
+		repaint();
+	}
+
+	@Override
+	public void resize(int newWidth, int newHeight) {
+		/*for (int i = 0; i < mapInfo.getMapLayers().size(); ++i) {
+			mapInfo.getMapLayers().get(i).resize(newWidth, newHeight);
+		}
+		mapInfo.getCollisionLayer().resize(newWidth, newHeight);
+		repaint();*/
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

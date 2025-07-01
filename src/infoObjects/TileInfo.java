@@ -46,8 +46,10 @@ public class TileInfo {
     	index = ti.getIndex();
     	setToLayer = ti.getSetToLayer();
     	tile = ImageTools.copyBufferedImage(ti.getTileImage());
-    	setHflip(ti.isHflip());
-    	setVflip(ti.isVflip());
+    	//setHflip(ti.isHflip());
+    	//setVflip(ti.isVflip());
+    	hflip = ti.isHflip();
+    	vflip = ti.isVflip();
     	name = ti.getName();
     	palletteIndex = ti.getPalletteIndex();
     }
