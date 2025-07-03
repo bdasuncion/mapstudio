@@ -5,6 +5,7 @@ import java.awt.BorderLayout;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
 import infoObjects.TileSetInfo;
 import interfaces.MapTileSettingModeSelection;

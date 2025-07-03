@@ -36,54 +36,19 @@ public class MapCanvasInternalFrame extends JInternalFrame {
 		setTitle(mapTitle.toString());
 		
         mapView = new MapCanvasWxH(mi, width,height,tileWidth,tileHeight);
-       
-        mapView.setPreferredSize(new Dimension(width, height));
-        //mapView.setSize(mapView.getPreferredSize());
-        
-		JScrollPane scrollView = new JScrollPane(mapView);
+        mapView.setBorder(BorderFactory.createLineBorder(Color.RED));
 		
-		scrollView.setViewportView(mapView);
-
-		add(scrollView, BorderLayout.CENTER);
+		add(mapView, BorderLayout.CENTER);
 		
-		mapView.revalidate();
-		scrollView.revalidate();
-		mapView.repaint();
-		
-		setLocation(0, 200);		
+		//setPreferredSize(new Dimension(200, 200));
+		setVisible(true);		
 		pack();
-		setVisible(true);
-
-		scrollView.revalidate();
+		setLocation(0, 200);
+		
 		mapView.revalidate();
 		mapView.repaint();
 		
-		mapView.setBorder(BorderFactory.createLineBorder(Color.RED));
-		scrollView.setBorder(BorderFactory.createLineBorder(Color.GREEN));
-		//scrollView.getViewport().setBorder(BorderFactory.createLineBorder(Color.ORANGE));
-		//repaint();
-		
-		System.out.println("MAP SIZE:" + mapView.getPreferredSize());
-		System.out.println("MAP W:" + mapView.getWidth() + " H:"+ mapView.getHeight());
-		System.out.println("SCROLL SIZE:" + scrollView.getPreferredSize());
-		System.out.println("SCROLL W:" + scrollView.getWidth() + " H:"+ scrollView.getHeight());
-		
-		//mapView.setSize(mapView.getPreferredSize());
-		//mapView.revalidate();
-
-		SwingUtilities.invokeLater(() -> {
-			//mapView.setPreferredSize(new Dimension(width, height));
-			//mapView.revalidate();
-			//repaint();
-		    //System.out.println("MapView size: " + mapView.getWidth() + " x " + mapView.getHeight());
-		    //System.out.println("Scroll size: " + scrollView.getWidth() + " x " + scrollView.getHeight());
-		    //System.out.println("VIEW: " + scrollView.getViewport().getView());
-		    
-			System.out.println("Viewport: " + scrollView.getViewport());
-		    System.out.println("Viewport view: " + scrollView.getViewport().getView());
-		    System.out.println("Viewport size: " + scrollView.getViewport().getViewSize());
-		    System.out.println("MapView actual size: " + mapView.getWidth() + " x " + mapView.getHeight());
-		});
+		validate();
 	}
 	
 	public MapCanvasWxH getMapView() {
