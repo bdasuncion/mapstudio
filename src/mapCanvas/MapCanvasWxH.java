@@ -20,6 +20,7 @@ import java.awt.image.BufferedImage;
 import java.util.Vector;
 
 import javax.swing.BoxLayout;
+import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -929,6 +930,18 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 		mapHeight = heightSet;
 		mapWidthInTiles = mapWidth/tileWidth;
 		mapHeightInTiles = mapHeight/tileHeight;
+		
+		Container parent = getParent();
+		
+		while (parent != null) {
+			if (parent instanceof JInternalFrame) {
+				System.out.println("UPDATE TITLE");
+				JInternalFrame internalFrameParent = (JInternalFrame) parent;
+				internalFrameParent.setTitle("Map " + mapWidth + "x" + mapHeight + " Tile " + tileWidth + "x" + tileHeight);
+				break;
+			}
+			parent = parent.getParent();
+		}
 		
 		repaint();
 	}
