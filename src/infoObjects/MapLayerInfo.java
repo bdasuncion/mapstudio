@@ -137,7 +137,7 @@ public class MapLayerInfo {
         for (int i = 0; i < height; ++i) {
         	for (int j = 0; j < width; ++j) {
         		//this.tiles.set(width*i + j, tilesCopy.get(i*width + j));
-        		setTileAt(j, i, tilesCopy.get(i*width + j));
+        		setTileAt(j, i, tilesCopy.get(i*currentWidth + j));
         	}
         }
     }
