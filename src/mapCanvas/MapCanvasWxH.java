@@ -43,6 +43,7 @@ import interfaces.TileSetting;
 import tools.ImageTools;
 
 import mapBlock.MapWxH;
+import mapMaker.MapDesktop;
 
 public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipulation, KeyListener,
     MapViewSettings, ModeSelectionInterface, MapControls, MapTileSettingModeSelection {
@@ -67,8 +68,8 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 	
 	private int mapWidth = 256;
 	private int mapHeight = 256;
-	private int tileWidth = 8;
-	private int tileHeight = 8;
+	public  static int tileWidth = 8;
+	public  static int tileHeight = 8;
 	private int collisionWidth = 8;
 	private int collisionHeight = 8;
 	private int collisionFilterMin = 0;
@@ -171,39 +172,37 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 		super.paintComponent(g);
         
 		Graphics2D g2D =(Graphics2D)g;
-				
-		g2D.fill(new Rectangle(0, 0, (int)(mapWidth*scale), (int)(mapHeight*scale)));
-		BufferedImage display = g2D.getDeviceConfiguration().createCompatibleImage(
-				mapWidth, mapHeight);
 		
 		g2D.scale(scale, scale);
 		
 		g2D.translate(mapMoveOffsetX, mapMoveOffsetY);
+		
+		g2D.fill(new Rectangle(0, 0, (int)(mapWidth), (int)(mapHeight)));
+		BufferedImage display = g2D.getDeviceConfiguration().createCompatibleImage(
+				mapWidth, mapHeight);
+		
+
 		if(layer3Visible == true && mapInfo != null && 
 			mapInfo.getMapLayers().get(3).getMapDisplay() != null) {
 				display = mapInfo.getMapLayers().get(3).getMapDisplay();
-				System.out.println("DRAW 1");
 				g2D.drawImage(display, 0, 0, display.getWidth(),display.getHeight(), this);
 		}
 		
 		if(layer2Visible == true && mapInfo != null && 
 				mapInfo.getMapLayers().get(2).getMapDisplay() != null) {
 				display = mapInfo.getMapLayers().get(2).getMapDisplay();
-				System.out.println("DRAW 2");
 				g2D.drawImage(display, 0, 0, display.getWidth(),display.getHeight(), this);
 		}
 		
 		if(layer1Visible == true && mapInfo != null && 
 			mapInfo.getMapLayers().get(1).getMapDisplay() != null) {
 				display = mapInfo.getMapLayers().get(1).getMapDisplay();
-				System.out.println("DRAW 3");
 				g2D.drawImage(display, 0, 0, display.getWidth(),display.getHeight(), this);
 		}
 		
 		if(layer0Visible == true && mapInfo != null && 
 			mapInfo.getMapLayers().get(0).getMapDisplay() != null) {
 				display = mapInfo.getMapLayers().get(0).getMapDisplay();
-				System.out.println("DRAW 4");
 				g2D.drawImage(display, 0, 0, display.getWidth(),display.getHeight(), this);
 		}
 		
@@ -907,11 +906,31 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 
 	@Override
 	public void resize(int newWidth, int newHeight) {
-		/*for (int i = 0; i < mapInfo.getMapLayers().size(); ++i) {
-			mapInfo.getMapLayers().get(i).resize(newWidth, newHeight);
+		
+		
+		int widthSet = newWidth;
+		if (newWidth%MapDesktop.minTileWidth > 0) {
+			widthSet = ((newWidth/MapDesktop.minTileWidth)+ 1 )* MapDesktop.minTileWidth;
 		}
-		mapInfo.getCollisionLayer().resize(newWidth, newHeight);
-		repaint();*/
+		
+		int heightSet = newHeight;
+		if (newHeight%MapDesktop.minTileheight > 0) {
+			heightSet = ((newHeight/MapDesktop.minTileheight)+ 1 )* MapDesktop.minTileheight;
+		}
+		
+		for (int i = 0; i < mapInfo.getMapLayers().size(); ++i) {
+			mapInfo.getMapLayers().get(i).resize(widthSet, heightSet);
+		}
+		
+		System.out.println("RESIZE:" + widthSet + " " + heightSet);
+		
+		mapInfo.getCollisionLayer().resize(widthSet, heightSet);
+		mapWidth = widthSet;
+		mapHeight = heightSet;
+		mapWidthInTiles = mapWidth/tileWidth;
+		mapHeightInTiles = mapHeight/tileHeight;
+		
+		repaint();
 	}
 
 	@Override

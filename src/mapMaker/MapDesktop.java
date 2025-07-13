@@ -67,8 +67,8 @@ public class MapDesktop extends JDesktopPane
 	private int collisionHeight = 8;
 	private MapInfo mapInfo;
 	
-	private static final int minTileWidth = 16;
-	private static final int minTileheight = 16;
+	public static final int minTileWidth = 16;
+	public static final int minTileheight = 16;
 	
 	public MapDesktop(JFrame owner, int width, int height,
 			int tileW, int tileH) {
