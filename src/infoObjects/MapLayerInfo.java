@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import mapCanvas.MapCanvasWxH;
 import tools.ImageTools;
 
 public class MapLayerInfo {
@@ -40,7 +41,7 @@ public class MapLayerInfo {
         
         int width = this.widthInTiles;
         int height = this.heightInTiles;
-        System.out.println("WIDTH IN TILES: " + this.widthInTiles + " HEIGHT IN TILES: " + this.heightInTiles);
+        //System.out.println("WIDTH IN TILES: " + this.widthInTiles + " HEIGHT IN TILES: " + this.heightInTiles);
 
         //for(int count = 0; count < 2; ++count) {
 	        for (int i = 0; i < height; ++i) {
@@ -59,7 +60,7 @@ public class MapLayerInfo {
         
         int width = this.widthInTiles;
         int height = this.heightInTiles;
-        System.out.println("WIDTH IN TILES: " + this.widthInTiles + " HEIGHT IN TILES: " + this.heightInTiles);
+        //System.out.println("WIDTH IN TILES: " + this.widthInTiles + " HEIGHT IN TILES: " + this.heightInTiles);
         
         //for(int count = 0; count < 2; ++count) {
 	        for (int i = 0; i < height; ++i) {
@@ -78,7 +79,7 @@ public class MapLayerInfo {
         
         int width = this.widthInTiles;
         int height = this.heightInTiles;
-        System.out.println("WIDTH IN TILES: " + this.widthInTiles + " HEIGHT IN TILES: " + this.heightInTiles);
+        //System.out.println("WIDTH IN TILES: " + this.widthInTiles + " HEIGHT IN TILES: " + this.heightInTiles);
 
         //for(int count = 0; count < 2; ++count) {
 	        for (int i = 0; i < height; ++i) {
@@ -96,7 +97,7 @@ public class MapLayerInfo {
         
         int width = this.widthInTiles;
         int height = this.heightInTiles;
-        System.out.println("WIDTH IN TILES: " + this.widthInTiles + " HEIGHT IN TILES: " + this.heightInTiles);
+        System.out.println("SHIFT WIDTH IN TILES: " + this.widthInTiles + " HEIGHT IN TILES: " + this.heightInTiles);
 
         //for(int count = 0; count < 2; ++count) {
 	        for (int i = 0; i < height; ++i) {
@@ -115,12 +116,28 @@ public class MapLayerInfo {
         
         int currentWidth = this.widthInTiles;
         int currentHeight = this.heightInTiles;
-        int width = Math.min(currentWidth, newWidth);
-        int height = Math.min(currentHeight, newHeight);
+        int width = Math.min(currentWidth, newWidth/MapCanvasWxH.tileWidth);
+        int height = Math.min(currentHeight, newHeight/MapCanvasWxH.tileHeight);
         
+        System.out.println("CURRENT WIDTH:" + widthInTiles + " HEIGHT:" + heightInTiles);
+        
+        setWidthInTiles(newWidth/MapCanvasWxH.tileWidth);
+        setHeightInTiles(newHeight/MapCanvasWxH.tileHeight);
+        
+        System.out.println("SET NEW WIDTH:" + widthInTiles + " HEIGHT:" + heightInTiles);
+ 
+        tiles = new Vector<TileInfo>();
+    	for (int i = 0; i < widthInTiles*heightInTiles; ++i) {
+    		tiles.add(new TileInfo(MapCanvasWxH.tileWidth, MapCanvasWxH.tileHeight));
+    		tiles.lastElement().setName("EMPTY");
+    	}
+    	
+    	mapDisplay = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
+    	
         for (int i = 0; i < height; ++i) {
         	for (int j = 0; j < width; ++j) {
-        		this.tiles.set(width*i + j, tilesCopy.get(i*width + j));
+        		//this.tiles.set(width*i + j, tilesCopy.get(i*width + j));
+        		setTileAt(j, i, tilesCopy.get(i*currentWidth + j));
         	}
         }
     }

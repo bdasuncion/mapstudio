@@ -1,7 +1,15 @@
 package mapInternalFrames;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.ScrollPane;
+
+import javax.swing.BorderFactory;
 import javax.swing.JInternalFrame;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
 import infoObjects.MapInfo;
 import interfaces.TileSetPanelDisplay;
@@ -28,17 +36,23 @@ public class MapCanvasInternalFrame extends JInternalFrame {
 		setTitle(mapTitle.toString());
 		
         mapView = new MapCanvasWxH(mi, width,height,tileWidth,tileHeight);
+        mapView.setBorder(BorderFactory.createLineBorder(Color.RED));
 		
-		JScrollPane scrollView = new JScrollPane(mapView);
+		add(mapView, BorderLayout.CENTER);
 		
-		setSize(1000,1000);
-		getContentPane().add(scrollView);
-		setVisible(true);
+		//setPreferredSize(new Dimension(200, 200));
+		setVisible(true);		
 		pack();
 		setLocation(0, 200);
+		
+		mapView.revalidate();
+		mapView.repaint();
+		
+		validate();
 	}
 	
 	public MapCanvasWxH getMapView() {
 		return mapView;
 	}
+	
 }

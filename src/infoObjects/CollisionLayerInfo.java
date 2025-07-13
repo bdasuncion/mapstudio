@@ -13,7 +13,7 @@ public class CollisionLayerInfo {
 		this.height = heightInTiles/2;
 		
     	collisionTiles = new Vector<CollisionInfo>();
-    	System.out.println("WIDTH IN TILES: " + this.width + " HEIGHT IN TILES: " + this.height);
+    	//System.out.println("WIDTH IN TILES: " + this.width + " HEIGHT IN TILES: " + this.height);
     	//for (int i = 0; i < (widthInTiles*heightInTiles)/2; ++i ) {
     	for (int i = 0; i < width*height; ++i ) {
     		collisionTiles.add(new CollisionInfo());
@@ -39,7 +39,7 @@ public class CollisionLayerInfo {
 	 private Vector<CollisionInfo> copy() {
 		 Vector<CollisionInfo> collisionCopy = new Vector<CollisionInfo>();
 		 
-		 System.out.println("WIDTH IN TILES: " + this.width + " HEIGHT IN TILES: " + this.height);
+		 //System.out.println("WIDTH IN TILES: " + this.width + " HEIGHT IN TILES: " + this.height);
 		 for (int i = 0; i < (this.width*this.height); ++i ) {
 			 CollisionInfo copyInfo = new CollisionInfo();
 			 copyInfo.set(this.collisionTiles.get(i));
