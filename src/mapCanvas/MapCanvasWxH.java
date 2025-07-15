@@ -20,6 +20,7 @@ import java.awt.image.BufferedImage;
 import java.util.Vector;
 
 import javax.swing.BoxLayout;
+import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -906,8 +907,7 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 
 	@Override
 	public void resize(int newWidth, int newHeight) {
-		
-		
+
 		int widthSet = newWidth;
 		if (newWidth%MapDesktop.minTileWidth > 0) {
 			widthSet = ((newWidth/MapDesktop.minTileWidth)+ 1 )* MapDesktop.minTileWidth;
@@ -921,14 +921,23 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 		for (int i = 0; i < mapInfo.getMapLayers().size(); ++i) {
 			mapInfo.getMapLayers().get(i).resize(widthSet, heightSet);
 		}
-		
-		System.out.println("RESIZE:" + widthSet + " " + heightSet);
-		
+				
 		mapInfo.getCollisionLayer().resize(widthSet, heightSet);
 		mapWidth = widthSet;
 		mapHeight = heightSet;
 		mapWidthInTiles = mapWidth/tileWidth;
 		mapHeightInTiles = mapHeight/tileHeight;
+		
+		Container parent = getParent();
+		
+		while (parent != null) {
+			if (parent instanceof JInternalFrame) {
+				JInternalFrame internalFrameParent = (JInternalFrame) parent;
+				internalFrameParent.setTitle("Map " + mapWidth + "x" + mapHeight + " Tile " + tileWidth + "x" + tileHeight);
+				break;
+			}
+			parent = parent.getParent();
+		}
 		
 		repaint();
 	}

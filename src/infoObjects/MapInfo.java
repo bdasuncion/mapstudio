@@ -327,4 +327,20 @@ public class MapInfo {
 		tileFromLayer.setIndex(0);
 		//tileFromLayer.setTile(ImageTools.createEmptyImage(8, 8));
 	}
+	
+	public void shiftLeft() {
+		
+	}
+	
+	public void shiftRight() {
+		
+	}
+	
+	public void shiftUp() {
+		
+	}
+	
+	public void shiftDown() {
+		
+	}
 }
