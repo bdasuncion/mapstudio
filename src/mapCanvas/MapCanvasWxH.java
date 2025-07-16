@@ -866,6 +866,8 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 			mapInfo.getMapLayers().get(i).shiftLeft();
 		}
 		mapInfo.getCollisionLayer().shiftLeft();
+		mapInfo.shiftLeft();
+		mapInfo.shiftLeft();
 		repaint();
 	}
 
@@ -878,6 +880,8 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 			mapInfo.getMapLayers().get(i).shiftRight();
 		}
 		mapInfo.getCollisionLayer().shiftRight();
+		mapInfo.shiftRight();
+		mapInfo.shiftRight();
 		repaint();
 	}
 
@@ -890,6 +894,8 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 			mapInfo.getMapLayers().get(i).shiftUp();
 		}
 		mapInfo.getCollisionLayer().shiftUp();
+		mapInfo.shiftUp();
+		mapInfo.shiftUp();
 		repaint();
 	}
 
@@ -902,6 +908,8 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 			mapInfo.getMapLayers().get(i).shiftDown();
 		}
 		mapInfo.getCollisionLayer().shiftDown();
+		mapInfo.shiftDown();
+		mapInfo.shiftDown();
 		repaint();
 	}
 
@@ -922,11 +930,13 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 			mapInfo.getMapLayers().get(i).resize(widthSet, heightSet);
 		}
 				
-		mapInfo.getCollisionLayer().resize(widthSet, heightSet);
 		mapWidth = widthSet;
 		mapHeight = heightSet;
 		mapWidthInTiles = mapWidth/tileWidth;
 		mapHeightInTiles = mapHeight/tileHeight;
+		mapInfo.getCollisionLayer().resize(mapWidthInTiles/2, mapHeightInTiles/2);
+		mapInfo.setWidthInTiles(mapWidthInTiles);
+		mapInfo.setHeightInTiles(mapHeightInTiles);
 		
 		Container parent = getParent();
 		

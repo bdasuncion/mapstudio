@@ -329,18 +329,58 @@ public class MapInfo {
 	}
 	
 	public void shiftLeft() {
+		for (ActorInfo actor:actors) {
+			actor.setX(actor.getX() - 8);
+		}
 		
+		for (EventInfo event:events) {
+			event.setX(event.getX() - 8);
+		}
+		
+		for (SpriteMaskInfo mask:spriteMasks) {
+			mask.setX(mask.getX() - 8);
+		}
 	}
 	
 	public void shiftRight() {
+		for (ActorInfo actor:actors) {
+			actor.setX(actor.getX() + 8);
+		}
 		
+		for (EventInfo event:events) {
+			event.setX(event.getX() + 8);
+		}
+		
+		for (SpriteMaskInfo mask:spriteMasks) {
+			mask.setX(mask.getX() + 8);
+		}
 	}
 	
 	public void shiftUp() {
+		for (ActorInfo actor:actors) {
+			actor.setY(actor.getY() - 8);
+		}
 		
+		for (EventInfo event:events) {
+			event.setY(event.getY() - 8);
+		}
+		
+		for (SpriteMaskInfo mask:spriteMasks) {
+			mask.setY(mask.getY() - 8);
+		}
 	}
 	
 	public void shiftDown() {
+		for (ActorInfo actor:actors) {
+			actor.setY(actor.getY() + 8);
+		}
 		
+		for (EventInfo event:events) {
+			event.setY(event.getY() + 8);
+		}
+		
+		for (SpriteMaskInfo mask:spriteMasks) {
+			mask.setY(mask.getY() + 8);
+		}
 	}
 }
