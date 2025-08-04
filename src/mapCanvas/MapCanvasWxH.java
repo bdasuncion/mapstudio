@@ -174,9 +174,10 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
         
 		Graphics2D g2D =(Graphics2D)g;
 		
+		g2D.translate(mapMoveOffsetX, mapMoveOffsetY);
+		
 		g2D.scale(scale, scale);
 		
-		g2D.translate(mapMoveOffsetX, mapMoveOffsetY);
 		
 		g2D.fill(new Rectangle(0, 0, (int)(mapWidth), (int)(mapHeight)));
 		BufferedImage display = g2D.getDeviceConfiguration().createCompatibleImage(
@@ -243,9 +244,9 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 			int yOffset = 15;
 			g2d.setColor(Color.black);
 			int displayAtX = displayCoordinatesX;
-			if (displayAtX + coordBoxWidth >= mapWidth) {
-				displayAtX -= coordBoxWidth;
-			}
+			//if (displayAtX + coordBoxWidth >= mapWidth) {
+			//	displayAtX -= coordBoxWidth;
+			//}
 			g2d.fillRect(displayAtX, displayCoordinatesY - yOffset, coordBoxWidth, coordBoxHeigth);
 			g2d.setColor(Color.white);
 			g2d.drawString("(" + displayCoordinatesX + ", " + displayCoordinatesY + ")", 
@@ -278,8 +279,13 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 					g2D.setColor(new Color(0, 255, 0, 255));
 					//g2D.fill(new Rectangle((collisionX + collisionInfo.getX()), (collisionY - collisionInfo.getHeight() + 16),
 					//		collisionInfo.getWidth(), collisionInfo.getHeight()));
-					g2D.drawLine((collisionX + 8), (collisionY + 8), 
-							(collisionX + 8), collisionY + 8 - collisionInfo.getHeight());
+					//g2D.drawLine((collisionX + 8), (collisionY + 8), 
+					//		(collisionX + 8), collisionY + 8 - collisionInfo.getHeight());
+					
+					g2D.setColor(new Color(128, 255, 128, 255));
+					g2D.fill(new Rectangle((collisionX), (collisionY - collisionInfo.getHeight() + 16),
+							collisionInfo.getWidth(), collisionInfo.getHeight()));
+					
 					g2D.setColor(new Color(128, 128, 128, 190));
 					g2D.fill(new Rectangle((collisionX + collisionInfo.getX()), (collisionY - collisionInfo.getHeight()),
 							collisionInfo.getWidth(), collisionInfo.getLength()));
@@ -631,8 +637,8 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 	}
 	
 	private void setDisplayCoordinates(int mouseX, int mouseY) {
-		displayCoordinatesX = (int)(mouseX/scale);
-		displayCoordinatesY = (int)(mouseY/scale);
+		displayCoordinatesX = (int)((mouseX/scale) - (mapMoveOffsetX/scale));
+		displayCoordinatesY = (int)((mouseY/scale) - (mapMoveOffsetY/scale));
 		displayCoordinates = true;
 	}
 	
@@ -690,11 +696,13 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
         }
 		
 	   private int normalizeX(int x) {
-		   return (int)((x - mapMoveOffsetX*scale)/(snapToWidth*scale));
+		   //return (int)((x - mapMoveOffsetX*scale)/(snapToWidth*scale));
+		   return (int)((x - mapMoveOffsetX)/(snapToWidth*scale));
 	    }
 	   
 	   private int normalizeY(int y) {
-		   return (int)((y - mapMoveOffsetY*scale)/(snapToHeight*scale));
+		   //return (int)((y - mapMoveOffsetY*scale)/(snapToHeight*scale));
+		   return (int)((y - mapMoveOffsetY)/(snapToHeight*scale));
 	    }
 		//@Override
 		public void mouseReleased(MouseEvent e) {
@@ -710,8 +718,10 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 				int highlightW = 16;
 				int highlightH = 16;
 				
-				xTileHighlightPosition = (int)((e.getX() - (mapMoveOffsetX*scale))/(highlightW*scale))*(highlightW);
-				yTileHighlightPosition = (int)((e.getY() - (mapMoveOffsetY*scale))/(highlightH*scale))*(highlightH);
+				//xTileHighlightPosition = (int)((e.getX() - (mapMoveOffsetX*scale))/(highlightW*scale))*(highlightW);
+				//yTileHighlightPosition = (int)((e.getY() - (mapMoveOffsetY*scale))/(highlightH*scale))*(highlightH);
+				xTileHighlightPosition = (int)((e.getX() - (mapMoveOffsetX))/(highlightW*scale))*(highlightW);
+				yTileHighlightPosition = (int)((e.getY() - (mapMoveOffsetY))/(highlightH*scale))*(highlightH);
 				
 				if(xTileSetPositionPrev != xTileHighlightPosition || yTileSetPositionPrev != yTileHighlightPosition) {
 					repaint();
