@@ -907,8 +907,7 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 
 	@Override
 	public void resize(int newWidth, int newHeight) {
-		
-		
+
 		int widthSet = newWidth;
 		if (newWidth%MapDesktop.minTileWidth > 0) {
 			widthSet = ((newWidth/MapDesktop.minTileWidth)+ 1 )* MapDesktop.minTileWidth;
@@ -922,9 +921,7 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 		for (int i = 0; i < mapInfo.getMapLayers().size(); ++i) {
 			mapInfo.getMapLayers().get(i).resize(widthSet, heightSet);
 		}
-		
-		System.out.println("RESIZE:" + widthSet + " " + heightSet);
-		
+				
 		mapInfo.getCollisionLayer().resize(widthSet, heightSet);
 		mapWidth = widthSet;
 		mapHeight = heightSet;
@@ -935,7 +932,6 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 		
 		while (parent != null) {
 			if (parent instanceof JInternalFrame) {
-				System.out.println("UPDATE TITLE");
 				JInternalFrame internalFrameParent = (JInternalFrame) parent;
 				internalFrameParent.setTitle("Map " + mapWidth + "x" + mapHeight + " Tile " + tileWidth + "x" + tileHeight);
 				break;
