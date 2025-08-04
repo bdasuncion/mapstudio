@@ -96,18 +96,27 @@ public class CollisionLayerInfo {
 	 }
 	 
 	 public void resize(int newWidth, int newHeight) {
-		 Vector<CollisionInfo> collisionCopy = copy();
-	        
-	        int currentWidth = this.width;
-	        int currentHeight = this.height;
-	        int width = Math.min(currentWidth, newWidth);
-	        int height = Math.min(currentHeight, newHeight);
-	        
-	        for (int i = 0; i < height; ++i) {
-	        	for (int j = 0; j < width; ++j) {
-	        		//this.collisionTiles.set(width*i + j, collisionCopy.get(i*width + j));
-	        		setCollisionAt(j, i, collisionCopy.get(i*width + j));
-	        	}
-	        }
-	    }
+		Vector<CollisionInfo> collisionCopy = copy();
+	    
+        int currentWidth = this.width;
+        int currentHeight = this.height;
+        int copyWidth = Math.min(currentWidth, newWidth);
+        int copyHeight = Math.min(currentHeight, newHeight);
+        
+        this.width = newWidth;
+        this.height = newHeight;
+        
+        collisionTiles = new Vector<CollisionInfo>();
+    	for (int i = 0; i < this.width*this.height; ++i ) {
+    		collisionTiles.add(new CollisionInfo());
+    	}
+    	
+    	for (int i = 0; i < copyHeight; ++i) {
+        	for (int j = 0; j < copyWidth; ++j) {
+        		//this.collisionTiles.set(width*i + j, collisionCopy.get(i*width + j));
+        		setCollisionAt(j, i, collisionCopy.get((i*currentWidth) + j));
+        	}
+        }
+
+	}
 }
