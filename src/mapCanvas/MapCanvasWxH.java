@@ -314,9 +314,13 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 						(yTileHighlightPosition - collisionInfo.getHeight()),
 						collisionInfo.getWidth(), collisionInfo.getLength()));
 				
-				int indexX = xTileHighlightPosition/snapToWidth;
-				int indexY = (yTileHighlightPosition/snapToHeight)*(mapWidthInTiles/2);
-				//System.out.println(indexX + " " + indexY);
+				int indexX = (xTileHighlightPosition)/snapToWidth;
+				int indexY = ((yTileHighlightPosition)/snapToHeight)*(mapWidthInTiles/2);
+				//System.out.println("INDEXX:" + indexX + " INDEXY:" + indexY);
+				//System.out.println("WIDTH:" + mapInfo.getWidthInTiles());
+				if ((indexX >= (mapInfo.getWidthInTiles()/2)) || (indexX + indexY) >= mapInfo.getCollisionTiles().size()) {
+					return;
+				}
 				CollisionInfo infoHighlight = mapInfo.getCollisionTiles().get(indexX + indexY);
 				g2D.setColor(new Color(190, 128, 0, 220));
 				g2D.fill(new Rectangle((xTileHighlightPosition + infoHighlight.getX()), 
@@ -326,7 +330,8 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 				int positionOffset = 12;
 				for (int offsetX = -1; offsetX < 2; ++offsetX) {	
 					int resultX = indexX + offsetX;
-					if (offsetX == 0 || resultX > mapWidthInTiles || resultX < 0 || (resultX + indexY) < 0) {
+					if (offsetX == 0 || resultX > mapWidthInTiles || resultX < 0 || 
+						(resultX + indexY) < 0 || (resultX + indexY) >= mapInfo.getCollisionTiles().size()) {
 						continue;
 					}
 					String label = "";
@@ -348,7 +353,8 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 				for (int offsetY = -1; offsetY < 2; ++offsetY) {
 					int resultY = indexY + (mapWidthInTiles/2)*offsetY;
 					int checkOffsetY = (yTileHighlightPosition/snapToHeight) + offsetY;
-					if (offsetY == 0 || checkOffsetY > mapHeightInTiles || checkOffsetY < 0 || (indexX + resultY) < 0) {
+					if (offsetY == 0 || checkOffsetY > mapHeightInTiles || checkOffsetY < 0 || 
+						(indexX + resultY) < 0 || (indexX + resultY) >= mapInfo.getCollisionTiles().size()) {
 						continue;
 					}
 					String label = "";
@@ -656,6 +662,7 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 					
 					mapInfo.setTileSetToMap(xTileSetPostion*2, yTileSetPostion*2, setTiles, tileMode, heightMapMode);
 	
+					System.out.println("TILE SETTING SET HIGHLIGHT");
 					xTileHighlightPosition = normalizeX(e.getX())*(snapToWidth);
 					yTileHighlightPosition = normalizeY(e.getY())*(snapToHeight);
 					//xTileHighlightPosition = normalizeX(e.getX());
@@ -737,8 +744,8 @@ public class MapCanvasWxH extends JPanel implements TileSetting, TileSetManipula
 				int snapToWidth = 16;
 				int snapToHeight = 16;
 				
-				xTileHighlightPosition = (int)(e.getX()/(snapToWidth*scale));//*(setW);
-				yTileHighlightPosition = (int)(e.getY()/(snapToHeight*scale));//*(setH);
+				xTileHighlightPosition = (int)((e.getX() - mapMoveOffsetX)/(snapToWidth*scale));//*(setW);
+				yTileHighlightPosition = (int)((e.getY() - mapMoveOffsetY)/(snapToHeight*scale));//*(setH);
 				
 				eventSettingDialog.setEventList((xTileHighlightPosition*snapToWidth), 
 						(yTileHighlightPosition*snapToHeight), mapInfo.getEvents());
