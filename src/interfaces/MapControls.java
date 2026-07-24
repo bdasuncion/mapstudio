@@ -6,5 +6,5 @@ public interface MapControls {
 	void shiftRight();
 	void shiftUp();
 	void shiftDown();
-	void resize(int newWidth, int newHeight);
+	void doResize(int newWidth, int newHeight);
 }

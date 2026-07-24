@@ -65,7 +65,8 @@ public class MapShiftAndResizeDialog extends JDialog {
 		JButton applyButton = new JButton("APPLY");
 		applyButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				mc.resize(Integer.parseInt(widthField.getText()), Integer.parseInt(heightField.getText()));
+				System.out.println("APPLY RESIZE");
+				mc.doResize(Integer.parseInt(widthField.getText()), Integer.parseInt(heightField.getText()));
 			}
 		});
 		
