@@ -96,7 +96,7 @@ TileSetting, TileSetDetailsSetting {
 	public void setTiles(TileSetInfo ts) {
 		tileSetInfo = ts;
 		setTitle("count: " 
-	+ ts.getTileSet().size() + " pallete:" + ts.getPaletteIdx() + " idx:" + ts.getTileIdxStart() + "-" +
+	+ ts.getTileCount() + " pallete:" + ts.getPaletteIdx() + " idx:" + ts.getTileIdxStart() + "-" +
 				ts.getTileIdxEnd());
 		mapTileSet.setTiles(ts);
     	tileSetLayerSettingsPanel.setTiles(ts);

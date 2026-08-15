@@ -2,6 +2,7 @@ package infoObjects;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
 
 //import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
 
@@ -153,5 +154,18 @@ public class TileInfo {
 
 	public void setPalletteIndex(int palletteIndex) {
 		this.palletteIndex = palletteIndex;
+	}
+	
+	public int countTile() {
+		byte[] pixels = ((DataBufferByte) tile.getRaster().getDataBuffer()).getData();
+		System.out.print("TILENAME:" + this.getName());
+		for (byte b : pixels) {
+            if (b != 0) {
+            	System.out.println(" SIZE:" + 1);
+                return 1; // Found a pixel using palette index 1-15
+            }
+        }
+		System.out.println(" SIZE:" + 0);
+		return 0;
 	}
 }

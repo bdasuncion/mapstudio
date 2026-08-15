@@ -246,4 +246,13 @@ public class TileSetInfo {
 	public static String formatName(String baseName, int row, int column) {
 		return baseName + "_" + row + "_" + column;
 	}
+	
+	public int getTileCount() {
+		int count = 0;
+		for (TileInfo tileInfo : tileSet) {
+			count += tileInfo.countTile();
+		}
+		System.out.println("COUNT:" + count + " NAME:" + this.getFileName());
+		return count;
+	}
 }
